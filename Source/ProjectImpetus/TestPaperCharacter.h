@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperCharacter.h"
-#include "PlayerStateManager.h"
+#include "Public/PlayerStateManagerComponent.h"
 #include "TestPaperCharacter.generated.h"
 
 /**
@@ -20,7 +20,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "State Management")
-	UPlayerStateManagerComponent m_PlayerFSM;
+	UPlayerStateManagerComponent* m_PlayerFSM;
 
 	UPROPERTY()
 	UPlayerBaseState* RoamingState;

@@ -12,9 +12,13 @@ public class ProjectImpetus : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
+		// Add Public and Private Include Paths
+		PublicIncludePaths.AddRange(new string[] { "ProjectImpetus/Public" });
+		PrivateIncludePaths.AddRange(new string[] { "ProjectImpetus/Private" });
+
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 

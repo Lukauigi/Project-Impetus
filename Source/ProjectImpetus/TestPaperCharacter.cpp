@@ -5,22 +5,22 @@
 
 void ATestPaperCharacter::ChangeState(UPlayerBaseState* NewState)
 {
-    m_PlayerFSM.SetCurrentState(RoamingState);
+    m_PlayerFSM->SetCurrentState(RoamingState);
 }
 
 void ATestPaperCharacter::BeginPlay()
 {
     // Initialize the PlayerStateManager
-    PlayerStateManager = NewObject<UPlayerStateManager>(this, TEXT("PlayerStateManager"));
-    PlayerStateManager->RegisterComponent();
+    //auto PlayerStateManager = NewObject<UPlayerStateManager>(this, TEXT("PlayerStateManager"));
+    //PlayerStateManager->RegisterComponent();
 
-    // Create states
-    RoamingState = NewObject<UPlayerRoamingState>(this);
-    TetheredState = NewObject<UPlayerTetheredState>(this);
+    //// Create states
+    //RoamingState = NewObject<UPlayerRoamingState>(this);
+    //TetheredState = NewObject<UPlayerTetheredState>(this);
 
-    // Set initial state
-    if (PlayerStateManager)
-    {
-        PlayerStateManager->ChangeState(RoamingState, this);
-    }
+    //// Set initial state
+    //if (PlayerStateManager)
+    //{
+    //    PlayerStateManager->ChangeState(RoamingState, this);
+    //}
 }

@@ -17,8 +17,10 @@ public:
 	// Sets default values for this component's properties
 	UPlayerStateManagerComponent();
 
-	UFUNCTION(BlueprintGetter)
+	UFUNCTION(BlueprintCallable, Category = "State Management")
 	UPlayerBaseState* GetCurrentState() { return m_CurrentState; }
+
+	UFUNCTION(BlueprintCallable, Category = "State Management")
 	void SetCurrentState(UPlayerBaseState* NewState);
 
 protected:
@@ -31,7 +33,6 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UProperty(BlueprintReadOnly, Category = "State Management", meta = (AllowPrivateAccess = "true"))
 	UPlayerBaseState* m_CurrentState;
 
 		
