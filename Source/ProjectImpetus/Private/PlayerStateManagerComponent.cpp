@@ -2,6 +2,8 @@
 
 
 #include "PlayerStateManagerComponent.h"
+#include "PlayerRoamingState.h"
+#include "PlayerTetheredState.h"
 
 // Sets default values for this component's properties
 UPlayerStateManagerComponent::UPlayerStateManagerComponent()
@@ -11,13 +13,19 @@ UPlayerStateManagerComponent::UPlayerStateManagerComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
+	this->RoamingState = CreateDefaultSubobject<UPlayerRoamingState>(TEXT("RoamingState"));
+	this->TetheredState = CreateDefaultSubobject<UPlayerTetheredState>(TEXT("TetheredState"));
+	this->m_CurrentState = this->RoamingState;
 }
 
 void UPlayerStateManagerComponent::SetCurrentState(UPlayerBaseState* NewState)
 {
-	m_CurrentState->ExitState();
-	m_CurrentState = NewState;
-	m_CurrentState->EnterState();
+	if (m_CurrentState != NewState)
+	{
+		m_CurrentState->ExitState();
+		m_CurrentState = NewState;
+		m_CurrentState->EnterState();
+	}
 }
 
 // Called when the game starts
@@ -26,7 +34,18 @@ void UPlayerStateManagerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+	// If RoamingState is assigned via Blueprint or editor, set m_CurrentState
+	if (RoamingState)
+	{
+		//this->m_CurrentState = RoamingState;
+		this->m_CurrentState->EnterState();
+		UE_LOG(LogTemp, Log, TEXT("SetCurrentState - RoamingState is set!"));
+	}
+	else
+	{
+		// Handle the case where RoamingState is not set (optional)
+		UE_LOG(LogTemp, Log, TEXT("RoamingState is not set!"));
+	}
 }
 
 
@@ -36,6 +55,6 @@ void UPlayerStateManagerComponent::TickComponent(float DeltaTime, ELevelTick Tic
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
-	m_CurrentState->UpdateState(DeltaTime);
+	//m_CurrentState->UpdateState(DeltaTime);
 }
 

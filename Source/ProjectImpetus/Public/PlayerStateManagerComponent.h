@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "PlayerBaseState.h"
+#include "PlayerRoamingState.h"
+#include "PlayerTetheredState.h"
 #include "PlayerStateManagerComponent.generated.h"
 
 
@@ -18,7 +20,7 @@ public:
 	UPlayerStateManagerComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "State Management")
-	UPlayerBaseState* GetCurrentState() { return m_CurrentState; }
+	UPlayerBaseState* GetCurrentState() const { return m_CurrentState; }
 
 	UFUNCTION(BlueprintCallable, Category = "State Management")
 	void SetCurrentState(UPlayerBaseState* NewState);
@@ -35,5 +37,10 @@ public:
 private:
 	UPlayerBaseState* m_CurrentState;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
+	UPlayerRoamingState* RoamingState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
+	UPlayerTetheredState* TetheredState;
 		
 };
