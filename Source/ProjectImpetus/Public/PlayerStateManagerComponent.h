@@ -23,6 +23,12 @@ class PROJECTIMPETUS_API UPlayerStateManagerComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
+	TSubclassOf<UPlayerRoamingState> RoamingStateClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
+	TSubclassOf<UPlayerTetheredState> TetheredStateClass;
+
 	// Sets default values for this component's properties
 	UPlayerStateManagerComponent();
 
@@ -49,14 +55,11 @@ private:
 	APawn* m_Player;
 	UEnhancedInputLocalPlayerSubsystem* m_InputSubSystem;
 	UInputMappingContext* m_CurrentContext;
-	UInputMappingContext* m_RoamingIMC;
-	UInputMappingContext* m_TetheredIMC;
-	UInputMappingContext* m_PendulumSwingIMC;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
 	UPlayerRoamingState* RoamingState;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
 	UPlayerTetheredState* TetheredState;
 		
 };

@@ -14,8 +14,8 @@ UPlayerStateManagerComponent::UPlayerStateManagerComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
-	this->RoamingState = CreateDefaultSubobject<UPlayerRoamingState>(TEXT("RoamingState"));
-	this->TetheredState = CreateDefaultSubobject<UPlayerTetheredState>(TEXT("TetheredState"));
+	/*this->RoamingState = CreateDefaultSubobject<UPlayerRoamingState>(TEXT("RoamingState"));
+	this->TetheredState = CreateDefaultSubobject<UPlayerTetheredState>(TEXT("TetheredState"));*/
 }
 
 void UPlayerStateManagerComponent::SetCurrentState(UPlayerBaseState* NewState)
@@ -51,6 +51,9 @@ void UPlayerStateManagerComponent::InitFSM()
 
 		UE_LOG(LogTemp, Log, TEXT("We got the IMC??? Let's try clearing it."));
 		this->m_InputSubSystem = InputSubsystem;
+
+		this->RoamingState = NewObject<UPlayerRoamingState>(this, RoamingStateClass);
+		this->TetheredState = NewObject<UPlayerTetheredState>(this, TetheredStateClass);
 
 		this->RoamingState->InitState(m_InputSubSystem);
 		this->TetheredState->InitState(m_InputSubSystem);

@@ -16,6 +16,8 @@ void UPlayerBaseState::ExitState()
 
 void UPlayerBaseState::UpdateState(float DeltaTime)
 {
+    if (m_InputSubSystem) UE_LOG(LogTemp, Log, TEXT("SubSystem exists"));
+    if (m_IMC) UE_LOG(LogTemp, Log, TEXT("IMC exists"));
 }
 
 void UPlayerBaseState::InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem)
