@@ -4,6 +4,8 @@
 #include "PlayerStateManagerComponent.h"
 #include "PlayerRoamingState.h"
 #include "PlayerTetheredState.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
+//#include "EnhancedInputSubsystems.h"
 
 // Sets default values for this component's properties
 UPlayerStateManagerComponent::UPlayerStateManagerComponent()
@@ -28,6 +30,32 @@ void UPlayerStateManagerComponent::SetCurrentState(UPlayerBaseState* NewState)
 	}
 }
 
+void UPlayerStateManagerComponent::InitFSM()
+{
+	UE_LOG(LogTemp, Log, TEXT("Get Pawn!!!"));
+	this->m_Player = Cast<APawn>(GetOwner());
+	if (m_Player)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Get PlayerController"));
+		// Get the player controller
+		APlayerController* PlayerController = Cast<APlayerController>(m_Player->GetController());
+		if (!PlayerController) return;
+
+		// Get the local player
+		UE_LOG(LogTemp, Log, TEXT("Get LocalPlayer"));
+		ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+		if (!LocalPlayer) return;
+
+		// Get the Enhanced Input subsystem
+		UE_LOG(LogTemp, Log, TEXT("Get InputSubSystem"));
+		UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+		if (!InputSubsystem) return;
+
+		UE_LOG(LogTemp, Log, TEXT("We got the IMC??? Let's try clearing it."));
+		InputSubsystem->ClearAllMappings();
+	}
+}
+
 // Called when the game starts
 void UPlayerStateManagerComponent::BeginPlay()
 {
@@ -47,7 +75,6 @@ void UPlayerStateManagerComponent::BeginPlay()
 		UE_LOG(LogTemp, Log, TEXT("RoamingState is not set!"));
 	}
 }
-
 
 // Called every frame
 void UPlayerStateManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

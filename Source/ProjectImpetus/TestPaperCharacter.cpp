@@ -2,6 +2,7 @@
 
 
 #include "TestPaperCharacter.h"
+#include "PlayerStateManagerComponent.h"
 
 void ATestPaperCharacter::ChangeState(UPlayerBaseState* NewState)
 {
@@ -10,8 +11,8 @@ void ATestPaperCharacter::ChangeState(UPlayerBaseState* NewState)
 
 void ATestPaperCharacter::BeginPlay()
 {
-    // Initialize the PlayerStateManager
-    //auto PlayerStateManager = NewObject<UPlayerStateManager>(this, TEXT("PlayerStateManager"));
+    //// Initialize the PlayerStateManager
+    //auto PlayerStateManager = NewObject<UPlayerStateManagerComponent>(this, TEXT("PlayerStateManager"));
     //PlayerStateManager->RegisterComponent();
 
     //// Create states

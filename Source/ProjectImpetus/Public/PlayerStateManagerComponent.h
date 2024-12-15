@@ -4,10 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+// States
 #include "PlayerBaseState.h"
 #include "PlayerRoamingState.h"
 #include "PlayerTetheredState.h"
+// UE5 Plugins
+//#include "PaperCharacter.h"
+//#include "EnhancedInputComponent.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "PlayerStateManagerComponent.generated.h"
+
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -15,7 +21,7 @@ class PROJECTIMPETUS_API UPlayerStateManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UPlayerStateManagerComponent();
 
@@ -24,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "State Management")
 	void SetCurrentState(UPlayerBaseState* NewState);
+
+	UFUNCTION(BlueprintCallable, Category = "State Management")
+	void InitFSM();
 
 protected:
 
@@ -36,7 +45,8 @@ public:
 
 private:
 	UPlayerBaseState* m_CurrentState;
-
+	APawn* m_Player;
+	UInputMappingContext* m_CurrentContext;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
 	UPlayerRoamingState* RoamingState;
 
