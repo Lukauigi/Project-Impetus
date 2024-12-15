@@ -17,6 +17,5 @@ class PROJECTIMPETUS_API UPlayerRoamingState : public UPlayerBaseState
 public:
 	virtual void EnterState() override;
 	virtual void ExitState() override;
-	virtual void UpdateState(float DeltaTime) override;
-	
+	virtual void UpdateState(float DeltaTime) override;	
 };

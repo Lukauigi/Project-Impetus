@@ -12,6 +12,7 @@
 //#include "PaperCharacter.h"
 //#include "EnhancedInputComponent.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 #include "PlayerStateManagerComponent.generated.h"
 
 
@@ -46,7 +47,12 @@ public:
 private:
 	UPlayerBaseState* m_CurrentState;
 	APawn* m_Player;
+	UEnhancedInputLocalPlayerSubsystem* m_InputSubSystem;
 	UInputMappingContext* m_CurrentContext;
+	UInputMappingContext* m_RoamingIMC;
+	UInputMappingContext* m_TetheredIMC;
+	UInputMappingContext* m_PendulumSwingIMC;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
 	UPlayerRoamingState* RoamingState;
 

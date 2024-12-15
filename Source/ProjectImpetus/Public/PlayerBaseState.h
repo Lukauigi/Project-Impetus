@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+// Enhanced Input
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 #include "PlayerBaseState.generated.h"
 
 /**
@@ -16,12 +19,19 @@ class PROJECTIMPETUS_API UPlayerBaseState : public UObject
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "State")
-	virtual void EnterState() PURE_VIRTUAL(UPlayerBaseState::EnterState, );
+	virtual void EnterState();
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	virtual void ExitState() PURE_VIRTUAL(UPlayerBaseState::ExitState, );
+	virtual void ExitState();
 
 	UFUNCTION(BlueprintCallable, Category = "State")
-	virtual void UpdateState(float DeltaTime) PURE_VIRTUAL(UPlayerBaseState::UpdateState, );
+	virtual void UpdateState(float DeltaTime);
+
+	void InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem);
+
+protected:
+	UEnhancedInputLocalPlayerSubsystem* m_InputSubSystem;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputMappingContext* m_IMC;
 	
 };

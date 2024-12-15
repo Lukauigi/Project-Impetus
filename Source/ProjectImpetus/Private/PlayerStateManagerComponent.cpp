@@ -4,7 +4,6 @@
 #include "PlayerStateManagerComponent.h"
 #include "PlayerRoamingState.h"
 #include "PlayerTetheredState.h"
-#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 //#include "EnhancedInputSubsystems.h"
 
 // Sets default values for this component's properties
@@ -17,7 +16,6 @@ UPlayerStateManagerComponent::UPlayerStateManagerComponent()
 	// ...
 	this->RoamingState = CreateDefaultSubobject<UPlayerRoamingState>(TEXT("RoamingState"));
 	this->TetheredState = CreateDefaultSubobject<UPlayerTetheredState>(TEXT("TetheredState"));
-	this->m_CurrentState = this->RoamingState;
 }
 
 void UPlayerStateManagerComponent::SetCurrentState(UPlayerBaseState* NewState)
@@ -52,7 +50,13 @@ void UPlayerStateManagerComponent::InitFSM()
 		if (!InputSubsystem) return;
 
 		UE_LOG(LogTemp, Log, TEXT("We got the IMC??? Let's try clearing it."));
-		InputSubsystem->ClearAllMappings();
+		this->m_InputSubSystem = InputSubsystem;
+
+		this->RoamingState->InitState(m_InputSubSystem);
+		this->TetheredState->InitState(m_InputSubSystem);
+
+		this->m_CurrentState = this->RoamingState;
+		this->m_CurrentState->EnterState();
 	}
 }
 
@@ -62,18 +66,6 @@ void UPlayerStateManagerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	// If RoamingState is assigned via Blueprint or editor, set m_CurrentState
-	if (RoamingState)
-	{
-		//this->m_CurrentState = RoamingState;
-		this->m_CurrentState->EnterState();
-		UE_LOG(LogTemp, Log, TEXT("SetCurrentState - RoamingState is set!"));
-	}
-	else
-	{
-		// Handle the case where RoamingState is not set (optional)
-		UE_LOG(LogTemp, Log, TEXT("RoamingState is not set!"));
-	}
 }
 
 // Called every frame
