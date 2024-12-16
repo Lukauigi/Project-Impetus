@@ -6,7 +6,7 @@
 #include "UObject/NoExportTypes.h"
 // Enhanced Input
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
-#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "PlayerBaseState.generated.h"
 
 /**
@@ -27,11 +27,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	virtual void UpdateState(float DeltaTime);
 
-	void InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem);
+	void InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem, UEnhancedInputComponent* EnhancedInputComponent);
 
 protected:
 	UEnhancedInputLocalPlayerSubsystem* m_InputSubSystem;
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* m_IMC;
+	UEnhancedInputComponent* m_EnhancedInputComponent;
 	
 };

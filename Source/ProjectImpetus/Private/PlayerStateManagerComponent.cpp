@@ -4,7 +4,6 @@
 #include "PlayerStateManagerComponent.h"
 #include "PlayerRoamingState.h"
 #include "PlayerTetheredState.h"
-//#include "EnhancedInputSubsystems.h"
 
 // Sets default values for this component's properties
 UPlayerStateManagerComponent::UPlayerStateManagerComponent()
@@ -14,8 +13,6 @@ UPlayerStateManagerComponent::UPlayerStateManagerComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
-	/*this->RoamingState = CreateDefaultSubobject<UPlayerRoamingState>(TEXT("RoamingState"));
-	this->TetheredState = CreateDefaultSubobject<UPlayerTetheredState>(TEXT("TetheredState"));*/
 }
 
 void UPlayerStateManagerComponent::SetCurrentState(UPlayerBaseState* NewState)
@@ -55,8 +52,10 @@ void UPlayerStateManagerComponent::InitFSM()
 		this->RoamingState = NewObject<UPlayerRoamingState>(this, RoamingStateClass);
 		this->TetheredState = NewObject<UPlayerTetheredState>(this, TetheredStateClass);
 
-		this->RoamingState->InitState(m_InputSubSystem);
-		this->TetheredState->InitState(m_InputSubSystem);
+		UEnhancedInputComponent* InputComponent = Cast<UEnhancedInputComponent>(m_Player->InputComponent);
+
+		this->RoamingState->InitState(m_InputSubSystem, InputComponent);
+		this->TetheredState->InitState(m_InputSubSystem, InputComponent);
 
 		this->m_CurrentState = this->RoamingState;
 		this->m_CurrentState->EnterState();

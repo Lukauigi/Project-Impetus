@@ -56,10 +56,10 @@ private:
 	UEnhancedInputLocalPlayerSubsystem* m_InputSubSystem;
 	UInputMappingContext* m_CurrentContext;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "States", meta = (AllowPrivateAccess = "true"))
 	UPlayerRoamingState* RoamingState;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Management", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "States", meta = (AllowPrivateAccess = "true"))
 	UPlayerTetheredState* TetheredState;
 		
 };
