@@ -46,7 +46,7 @@ void UPlayerStateManagerComponent::InitFSM()
 		UEnhancedInputLocalPlayerSubsystem* InputSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
 		if (!InputSubsystem) return;
 
-		UE_LOG(LogTemp, Log, TEXT("We got the IMC??? Let's try clearing it."));
+		//UE_LOG(LogTemp, Log, TEXT("We got the IMC??? Let's try clearing it."));
 		this->m_InputSubSystem = InputSubsystem;
 
 		this->RoamingState = NewObject<UPlayerRoamingState>(this, RoamingStateClass);
@@ -54,8 +54,8 @@ void UPlayerStateManagerComponent::InitFSM()
 
 		UEnhancedInputComponent* InputComponent = Cast<UEnhancedInputComponent>(m_Player->InputComponent);
 
-		this->RoamingState->InitState(m_InputSubSystem, InputComponent);
-		this->TetheredState->InitState(m_InputSubSystem, InputComponent);
+		this->RoamingState->InitState(m_InputSubSystem, InputComponent, GetOwner());
+		this->TetheredState->InitState(m_InputSubSystem, InputComponent, GetOwner());
 
 		this->m_CurrentState = this->RoamingState;
 		this->m_CurrentState->EnterState();

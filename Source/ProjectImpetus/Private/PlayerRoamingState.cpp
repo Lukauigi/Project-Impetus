@@ -39,4 +39,22 @@ void UPlayerRoamingState::UpdateState(float DeltaTime)
 void UPlayerRoamingState::Tether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("Tether func called"));
+	//UFunction* func = m_Player->FindFunction(FName("DynamicTest"));
+	UActorComponent* GrappleTetherComp = nullptr;
+
+	for (UActorComponent* Component : m_Player->GetComponents())
+	{
+		if (Component->ComponentHasTag(FName("GrappleTether")))
+		{
+			GrappleTetherComp = Component;
+			break;
+		}
+	}
+
+	if (GrappleTetherComp)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Inside scope"));
+		UFunction* Function = GrappleTetherComp->FindFunction(FName("FireGrappleTether"));
+		if (Function) GrappleTetherComp->ProcessEvent(Function, nullptr);
+	}
 }

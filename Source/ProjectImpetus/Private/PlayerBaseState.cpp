@@ -21,9 +21,10 @@ void UPlayerBaseState::UpdateState(float DeltaTime)
     //if (m_EnhancedInputComponent) UE_LOG(LogTemp, Log, TEXT("Input Comp exists"));
 }
 
-void UPlayerBaseState::InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem, UEnhancedInputComponent* EnhancedInputComponent)
+void UPlayerBaseState::InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem, UEnhancedInputComponent* EnhancedInputComponent, AActor* Player)
 {
     UE_LOG(LogTemp, Log, TEXT("PlayerBaseState: Assign members"));
     this->m_InputSubSystem = InputSubsystem;
     this->m_EnhancedInputComponent = EnhancedInputComponent;
+    this->m_Player = Player;
 }
