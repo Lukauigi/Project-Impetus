@@ -16,15 +16,13 @@ void UPlayerRoamingState::EnterState()
 		UE_LOG(LogTemp, Log, TEXT("Mapping: Action %s, Key %s"), *Mapping.Action->GetName(), *Mapping.Key.ToString());
 		if (Mapping.Action->GetFName() == "IA_GrappleTether")
 		{
-			FInputBindingHandle Binding = m_EnhancedInputComponent->BindAction(
+			FInputBindingHandle Handle = m_EnhancedInputComponent->BindAction(
 				Mapping.Action, 
 				ETriggerEvent::Triggered, 
 				this, 
 				&UPlayerRoamingState::InitTether
 			);
-			
-			//m_BoundHandles.Add(Mapping.Action);
-			m_BoundHandles.Add(Binding);
+			m_BoundHandles.Add(Handle);
 		}
 	}
 }
@@ -33,11 +31,6 @@ void UPlayerRoamingState::ExitState()
 {
 	Super::ExitState();
 	UE_LOG(LogTemp, Log, TEXT("Exiting Roaming State"));
-
-	for (const FInputBindingHandle Handle : m_BoundHandles)
-	{
-		m_EnhancedInputComponent->RemoveBinding(Handle);
-	}
 }
 
 void UPlayerRoamingState::UpdateState(float DeltaTime)

@@ -15,13 +15,13 @@ void UPlayerTetheredState::EnterState()
 		UE_LOG(LogTemp, Log, TEXT("Mapping: Action %s, Key %s"), *Mapping.Action->GetName(), *Mapping.Key.ToString());
 		if (Mapping.Action->GetFName() == "IA_GrappleTether")
 		{
-			m_EnhancedInputComponent->BindAction(
+			FInputBindingHandle Handle = m_EnhancedInputComponent->BindAction(
 				Mapping.Action, 
 				ETriggerEvent::Triggered, 
 				this, 
 				&UPlayerTetheredState::RetractTether
 			);
-			//m_BoundHandles.Add(Mapping.Action);
+			m_BoundHandles.Add(Handle);
 		}
 	}
 }
@@ -30,13 +30,6 @@ void UPlayerTetheredState::ExitState()
 {
 	Super::ExitState();
 	UE_LOG(LogTemp, Log, TEXT("Exiting Tethered State"));
-
-	/*int index = 0;
-	for (const FEnhancedInputActionEventBinding* Binding : m_BoundHandles)
-	{
-		m_EnhancedInputComponent->RemoveActionBinding(;
-		index++;
-	}*/
 }
 
 void UPlayerTetheredState::UpdateState(float DeltaTime)

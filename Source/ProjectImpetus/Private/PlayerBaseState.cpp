@@ -12,7 +12,10 @@ void UPlayerBaseState::EnterState()
 void UPlayerBaseState::ExitState()
 {
     this->m_InputSubSystem->ClearAllMappings();
-    //this->m_EnhancedInputComponent->ClearActionBindings(); // Clear all action bindings
+    for (const FInputBindingHandle Handle : m_BoundHandles)
+    {
+        m_EnhancedInputComponent->RemoveBinding(Handle);
+    }
 }
 
 void UPlayerBaseState::UpdateState(float DeltaTime)
