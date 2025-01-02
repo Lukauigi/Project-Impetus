@@ -8,6 +8,7 @@
 // Enhanced Input
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
+ 
 #include "PlayerBaseState.generated.h"
 
 /**
@@ -35,6 +36,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* m_IMC;
 	UEnhancedInputComponent* m_EnhancedInputComponent;
+	TArray<FInputBindingHandle> m_BoundHandles;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	AActor* m_Player;
 };

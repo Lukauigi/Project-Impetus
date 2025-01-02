@@ -2,24 +2,50 @@
 
 
 #include "PlayerTetheredState.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h"
 
 void UPlayerTetheredState::EnterState()
 {
 	Super::EnterState();
 
 	UE_LOG(LogTemp, Log, TEXT("Entering Tethered State"));
+	const TArray<FEnhancedActionKeyMapping>& Mappings = m_IMC->GetMappings();
+	for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Mapping: Action %s, Key %s"), *Mapping.Action->GetName(), *Mapping.Key.ToString());
+		if (Mapping.Action->GetFName() == "IA_GrappleTether")
+		{
+			m_EnhancedInputComponent->BindAction(
+				Mapping.Action, 
+				ETriggerEvent::Triggered, 
+				this, 
+				&UPlayerTetheredState::RetractTether
+			);
+			//m_BoundHandles.Add(Mapping.Action);
+		}
+	}
 }
 
 void UPlayerTetheredState::ExitState()
 {
 	Super::ExitState();
-
 	UE_LOG(LogTemp, Log, TEXT("Exiting Tethered State"));
+
+	/*int index = 0;
+	for (const FEnhancedInputActionEventBinding* Binding : m_BoundHandles)
+	{
+		m_EnhancedInputComponent->RemoveActionBinding(;
+		index++;
+	}*/
 }
 
 void UPlayerTetheredState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
-
 	UE_LOG(LogTemp, Log, TEXT("Updating Tethered State"));
+}
+
+void UPlayerTetheredState::RetractTether(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
 }

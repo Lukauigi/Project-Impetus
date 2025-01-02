@@ -16,8 +16,15 @@ void UPlayerRoamingState::EnterState()
 		UE_LOG(LogTemp, Log, TEXT("Mapping: Action %s, Key %s"), *Mapping.Action->GetName(), *Mapping.Key.ToString());
 		if (Mapping.Action->GetFName() == "IA_GrappleTether")
 		{
-
-			m_EnhancedInputComponent->BindAction(Mapping.Action, ETriggerEvent::Triggered, this, &UPlayerRoamingState::Tether);
+			FInputBindingHandle Binding = m_EnhancedInputComponent->BindAction(
+				Mapping.Action, 
+				ETriggerEvent::Triggered, 
+				this, 
+				&UPlayerRoamingState::InitTether
+			);
+			
+			//m_BoundHandles.Add(Mapping.Action);
+			m_BoundHandles.Add(Binding);
 		}
 	}
 }
@@ -25,23 +32,33 @@ void UPlayerRoamingState::EnterState()
 void UPlayerRoamingState::ExitState()
 {
 	Super::ExitState();
-
 	UE_LOG(LogTemp, Log, TEXT("Exiting Roaming State"));
+
+	for (const FInputBindingHandle Handle : m_BoundHandles)
+	{
+		m_EnhancedInputComponent->RemoveBinding(Handle);
+	}
 }
 
 void UPlayerRoamingState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
-
 	UE_LOG(LogTemp, Log, TEXT("Updating Roaming State"));
 }
 
-void UPlayerRoamingState::Tether(const FInputActionValue& Value)
+void UPlayerRoamingState::InitTether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("Tether func called"));
-	//UFunction* func = m_Player->FindFunction(FName("DynamicTest"));
 	UActorComponent* GrappleTetherComp = nullptr;
 
+	/*
+	* TODO: Create C++ class of GrappleTether ActorComp & define all vars and funcs
+	* so we don't need to find all funcs & vars dynamically.
+	* 
+	* Will improve project coherency, scalability, and is a slight* performance optimization.
+	*/
+
+	// cycle through comps to get GrappleTether
 	for (UActorComponent* Component : m_Player->GetComponents())
 	{
 		if (Component->ComponentHasTag(FName("GrappleTether")))
@@ -51,9 +68,13 @@ void UPlayerRoamingState::Tether(const FInputActionValue& Value)
 		}
 	}
 
+	// Call BP function to shoot the grapple tether
 	if (GrappleTetherComp)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Inside scope"));
+		FProperty* Prop = GrappleTetherComp->GetClass()->FindPropertyByName(FName("IsTetherActive"));
+		FBoolProperty* IsTetherActive = CastField<FBoolProperty>(Prop);
+		bool Flag = IsTetherActive->GetPropertyValue_InContainer(GrappleTetherComp);
+
 		UFunction* Function = GrappleTetherComp->FindFunction(FName("FireGrappleTether"));
 		if (Function) GrappleTetherComp->ProcessEvent(Function, nullptr);
 	}
