@@ -20,5 +20,5 @@ public:
 	virtual void UpdateState(float DeltaTime) override;
 	
 private:
-	void RetractTether(const FInputActionValue& Value);
+	void DisableTether(const FInputActionValue& Value);
 };

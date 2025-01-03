@@ -19,7 +19,7 @@ void UPlayerTetheredState::EnterState()
 				Mapping.Action, 
 				ETriggerEvent::Triggered, 
 				this, 
-				&UPlayerTetheredState::RetractTether
+				&UPlayerTetheredState::DisableTether
 			);
 			m_BoundHandles.Add(Handle);
 		}
@@ -38,7 +38,24 @@ void UPlayerTetheredState::UpdateState(float DeltaTime)
 	UE_LOG(LogTemp, Log, TEXT("Updating Tethered State"));
 }
 
-void UPlayerTetheredState::RetractTether(const FInputActionValue& Value)
+void UPlayerTetheredState::DisableTether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
+	UActorComponent* GrappleTetherComp = nullptr;
+
+	for (UActorComponent* Component : m_Player->GetComponents())
+	{
+		if (Component->ComponentHasTag(FName("GrappleTether")))
+		{
+			GrappleTetherComp = Component;
+			break;
+		}
+	}
+
+	// Call BP function to shoot the grapple tether
+	if (GrappleTetherComp)
+	{
+		UFunction* Function = GrappleTetherComp->FindFunction(FName("RetractTether"));
+		if (Function) GrappleTetherComp->ProcessEvent(Function, nullptr);
+	}
 }
