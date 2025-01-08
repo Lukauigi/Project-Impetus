@@ -6,18 +6,16 @@
 #include "GameFramework/Actor.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Source/Runtime/GameplayTags/Classes/GameplayTagContainer.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Source/Runtime/GameplayTags/Classes/GameplayTagAssetInterface.h" // Include the interface header
-#include "TestObjectTaggable.generated.h"
+#include "TaggableObject.generated.h"
 
 UCLASS()
-class PROJECTIMPETUS_API ATestObjectTaggable : public AActor, public IGameplayTagAssetInterface
+class PROJECTIMPETUS_API ATaggableObject : public AActor, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ATestObjectTaggable();
-
-	
+	ATaggableObject();
 
 	// Implement the GameplayTagAssetInterface
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const override;

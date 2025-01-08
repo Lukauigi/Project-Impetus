@@ -1,30 +1,30 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "TestObjectTaggable.h"
+#include "TaggableObject.h"
 
 // Sets default values
-ATestObjectTaggable::ATestObjectTaggable()
+ATaggableObject::ATaggableObject()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
-void ATestObjectTaggable::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
+void ATaggableObject::GetOwnedGameplayTags(FGameplayTagContainer& TagContainer) const
 {
 	TagContainer = GameplayTags; // Provide the tags stored in your container
 }
 
 // Called when the game starts or when spawned
-void ATestObjectTaggable::BeginPlay()
+void ATaggableObject::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void ATestObjectTaggable::Tick(float DeltaTime)
+void ATaggableObject::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
