@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Components/ActorComponent.h"
 // Enhanced Input
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputSubsystems.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
@@ -27,12 +28,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "State")
 	virtual void UpdateState(float DeltaTime);
 
-	void InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem, UEnhancedInputComponent* EnhancedInputComponent);
+	void InitState(UEnhancedInputLocalPlayerSubsystem* InputSubsystem, UEnhancedInputComponent* EnhancedInputComponent, AActor* Player);
 
 protected:
 	UEnhancedInputLocalPlayerSubsystem* m_InputSubSystem;
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* m_IMC;
 	UEnhancedInputComponent* m_EnhancedInputComponent;
-	
+	TArray<FInputBindingHandle> m_BoundHandles;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	AActor* m_Player;
 };

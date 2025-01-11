@@ -19,4 +19,6 @@ public:
 	virtual void ExitState() override;
 	virtual void UpdateState(float DeltaTime) override;
 	
+private:
+	void DisableTether(const FInputActionValue& Value);
 };
