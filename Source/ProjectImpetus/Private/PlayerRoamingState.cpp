@@ -4,6 +4,7 @@
 #include "PlayerRoamingState.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h"
+#include "GrappleTether.h"
 
 void UPlayerRoamingState::EnterState()
 {
@@ -42,33 +43,6 @@ void UPlayerRoamingState::UpdateState(float DeltaTime)
 void UPlayerRoamingState::InitTether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("Tether func called"));
-	UActorComponent* GrappleTetherComp = nullptr;
-
-	/*
-	* TODO: Create C++ class of GrappleTether ActorComp & define all vars and funcs
-	* so we don't need to find all funcs & vars dynamically.
-	* 
-	* Will improve project coherency, scalability, and is a slight* performance optimization.
-	*/
-
-	// cycle through comps to get GrappleTether
-	for (UActorComponent* Component : m_Player->GetComponents())
-	{
-		if (Component->ComponentHasTag(FName("GrappleTether")))
-		{
-			GrappleTetherComp = Component;
-			break;
-		}
-	}
-
-	// Call BP function to shoot the grapple tether
-	if (GrappleTetherComp)
-	{
-		FProperty* Prop = GrappleTetherComp->GetClass()->FindPropertyByName(FName("IsTetherActive"));
-		FBoolProperty* IsTetherActive = CastField<FBoolProperty>(Prop);
-		bool Flag = IsTetherActive->GetPropertyValue_InContainer(GrappleTetherComp);
-
-		UFunction* Function = GrappleTetherComp->FindFunction(FName("FireGrappleTether"));
-		if (Function) GrappleTetherComp->ProcessEvent(Function, nullptr);
-	}
+	UGrappleTether* GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
+	GrappleTetherComponent->FireGrappleTether();
 }

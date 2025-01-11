@@ -3,6 +3,7 @@
 
 #include "PlayerTetheredState.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h"
+#include "GrappleTether.h"
 
 void UPlayerTetheredState::EnterState()
 {
@@ -41,21 +42,6 @@ void UPlayerTetheredState::UpdateState(float DeltaTime)
 void UPlayerTetheredState::DisableTether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
-	UActorComponent* GrappleTetherComp = nullptr;
-
-	for (UActorComponent* Component : m_Player->GetComponents())
-	{
-		if (Component->ComponentHasTag(FName("GrappleTether")))
-		{
-			GrappleTetherComp = Component;
-			break;
-		}
-	}
-
-	// Call BP function to shoot the grapple tether
-	if (GrappleTetherComp)
-	{
-		UFunction* Function = GrappleTetherComp->FindFunction(FName("RetractTether"));
-		if (Function) GrappleTetherComp->ProcessEvent(Function, nullptr);
-	}
+	UGrappleTether* GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
+	GrappleTetherComponent->RetractGrappleTether();
 }
