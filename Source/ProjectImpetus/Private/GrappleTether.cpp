@@ -23,23 +23,6 @@ void UGrappleTether::BeginPlay()
 	
 }
 
-//void UGrappleTether::DynamicTether()
-//{
-//}
-//
-//void UGrappleTether::PendulumTether()
-//{
-//}
-//
-//void UGrappleTether::FireGrappleTether()
-//{
-//}
-//
-//void UGrappleTether::RetractGrappleTether()
-//{
-//}
-
-
 // Called every frame
 void UGrappleTether::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
