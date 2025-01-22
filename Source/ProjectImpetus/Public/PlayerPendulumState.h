@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerBaseState.h"
+#include "GrappleTether.h"
 #include "PlayerPendulumState.generated.h"
 
 /**
@@ -21,4 +22,5 @@ public:
 	
 private:
 	void DisableTether(const FInputActionValue& Value);
+	UGrappleTether* m_GrappleTetherComponent = nullptr;
 };

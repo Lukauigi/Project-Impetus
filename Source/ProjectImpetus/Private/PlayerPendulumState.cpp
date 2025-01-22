@@ -25,6 +25,8 @@ void UPlayerPendulumState::EnterState()
 			m_BoundHandles.Add(Handle);
 		}
 	}
+
+	this->m_GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
 }
 
 void UPlayerPendulumState::ExitState()
@@ -37,11 +39,11 @@ void UPlayerPendulumState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
 	UE_LOG(LogTemp, Log, TEXT("Updating Pendulum State"));
+	m_GrappleTetherComponent->PendulumTether();
 }
 
 void UPlayerPendulumState::DisableTether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
-	UGrappleTether* GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
-	GrappleTetherComponent->RetractGrappleTether();
+	m_GrappleTetherComponent->RetractGrappleTether();
 }
