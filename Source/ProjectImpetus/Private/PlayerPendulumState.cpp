@@ -3,20 +3,20 @@
 
 #include "PlayerPendulumState.h"
 
-void UPlayerTetheredState::EnterState()
+void UPlayerPendulumState::EnterState()
 {
 	Super::EnterState();
 
 	UE_LOG(LogTemp, Log, TEXT("Entering Pendulum State"));
 }
 
-void UPlayerTetheredState::ExitState()
+void UPlayerPendulumState::ExitState()
 {
 	Super::ExitState();
 	UE_LOG(LogTemp, Log, TEXT("Exiting Pendulum State"));
 }
 
-void UPlayerTetheredState::UpdateState(float DeltaTime)
+void UPlayerPendulumState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
 	UE_LOG(LogTemp, Log, TEXT("Updating Pendulum State"));
