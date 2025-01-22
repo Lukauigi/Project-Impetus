@@ -24,11 +24,13 @@ class PROJECTIMPETUS_API UPlayerStateManagerComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	// State Setters, set in BP
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
 	TSubclassOf<UPlayerRoamingState> RoamingStateClass;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
 	TSubclassOf<UPlayerTetheredState> TetheredStateClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
+	TSubclassOf<UPlayerPendulumState> PendulumStateClass;
 
 	// Sets default values for this component's properties
 	UPlayerStateManagerComponent();

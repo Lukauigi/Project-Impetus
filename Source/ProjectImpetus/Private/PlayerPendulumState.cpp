@@ -2,12 +2,29 @@
 
 
 #include "PlayerPendulumState.h"
+#include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h"
+#include "GrappleTether.h"
 
 void UPlayerPendulumState::EnterState()
 {
 	Super::EnterState();
 
 	UE_LOG(LogTemp, Log, TEXT("Entering Pendulum State"));
+	const TArray<FEnhancedActionKeyMapping>& Mappings = m_IMC->GetMappings();
+	for (const FEnhancedActionKeyMapping& Mapping : Mappings)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Mapping: Action %s, Key %s"), *Mapping.Action->GetName(), *Mapping.Key.ToString());
+		if (Mapping.Action->GetFName() == "IA_GrappleTether")
+		{
+			FInputBindingHandle Handle = m_EnhancedInputComponent->BindAction(
+				Mapping.Action,
+				ETriggerEvent::Triggered,
+				this,
+				&UPlayerPendulumState::DisableTether
+			);
+			m_BoundHandles.Add(Handle);
+		}
+	}
 }
 
 void UPlayerPendulumState::ExitState()
@@ -20,4 +37,11 @@ void UPlayerPendulumState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
 	UE_LOG(LogTemp, Log, TEXT("Updating Pendulum State"));
+}
+
+void UPlayerPendulumState::DisableTether(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
+	UGrappleTether* GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
+	GrappleTetherComponent->RetractGrappleTether();
 }

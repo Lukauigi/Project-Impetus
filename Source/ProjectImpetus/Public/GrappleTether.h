@@ -16,6 +16,7 @@ public:
 	// Sets default values for this component's properties
 	UGrappleTether();
 
+	// Logic implemented in BP
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tether")
 	void DynamicTether();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tether")
