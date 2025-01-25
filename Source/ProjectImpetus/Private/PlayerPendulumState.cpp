@@ -27,6 +27,8 @@ void UPlayerPendulumState::EnterState()
 	}
 
 	this->m_GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
+	FVector pos = m_Player->GetActorLocation();
+	m_GrappleTetherComponent->PrepareMyPendulumTether(FVector2D(pos.X, -pos.Y));
 }
 
 void UPlayerPendulumState::ExitState()
@@ -39,7 +41,7 @@ void UPlayerPendulumState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
 	UE_LOG(LogTemp, Log, TEXT("Updating Pendulum State"));
-	m_GrappleTetherComponent->PendulumTether();
+	m_GrappleTetherComponent->MyPendulumTether(DeltaTime);
 }
 
 void UPlayerPendulumState::DisableTether(const FInputActionValue& Value)
