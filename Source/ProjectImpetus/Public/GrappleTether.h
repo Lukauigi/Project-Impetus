@@ -6,16 +6,24 @@
 #include "Components/ActorComponent.h"
 #include "GrappleTether.generated.h"
 
+// Constants
+const double MY_PI = 3.141592653589793;
+const double GRAVITY = 9.8; // m/s²
+
 struct RB2D {
 	FVector2D position;
 	FVector2D velocity;
 	float angle;
 	float angularVelocity;
+	float angularAcceleration;
 	float mass;
 	float momentOfInertia;
 
 	RB2D(FVector2D pos, float mass, float inertia) : position(pos), velocity(0.f, 0.f), 
-		angle(0.f), angularVelocity(0.f), mass(mass), momentOfInertia(inertia) {}
+		angle(0.f), angularVelocity(0.f), angularAcceleration(0.f), mass(mass), momentOfInertia(inertia) {}
+	// init with starting angle
+	RB2D(FVector2D pos, float mass, float inertia, float angle) : position(pos), velocity(0.f, 0.f),
+		angle(angle), angularVelocity(0.f), angularAcceleration(0.f), mass(mass), momentOfInertia(inertia) {}
 	RB2D() {}
 };
 
@@ -30,9 +38,26 @@ public:
 
 	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass, 
 		float rodLength, float dampingFactor) : anchor(anchorPoint), playerBob(bobPosition, 
-			bobMass, 0.5f * bobMass * rodLength), length(rodLength), damping(dampingFactor), 
-		motorSpeed(0.f), maxMotorTorque(10.0f) {}
+			bobMass, 1.65f * bobMass * rodLength), length(rodLength), damping(dampingFactor), 
+		motorSpeed(0.f), maxMotorTorque(250.0f) {}
+	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass,
+		float rodLength, float dampingFactor, float startAngle) : anchor(anchorPoint), playerBob(bobPosition,
+			bobMass, 1.65f * bobMass * rodLength, startAngle), length(rodLength), damping(dampingFactor),
+		motorSpeed(0.f), maxMotorTorque(250.0f) {}
 	PendulumSystem() {}
+
+	FVector2D GetPendulumBobPosition2D()
+	{
+		/*float x = length * FMath::Sin(playerBob.angle);
+		float y = length * FMath::Cos(playerBob.angle);
+		return FVector2D(x, y);*/
+		return FVector2D(playerBob.position.X, playerBob.position.Y);
+	}
+
+	FVector GetPendulumBobPosition3D()
+	{
+		return FVector(playerBob.position.X, playerBob.position.Y, 0.f);
+	}
 
 	void Update(float deltaTime) {
 		// Calculate direction and enforce hinge constraint
@@ -49,6 +74,12 @@ public:
 		// Project gravity onto the tangential direction
 		FVector2D tangent(-normalizedDirection.Y, normalizedDirection.X);
 		FVector2D tangentialForce = FVector2D::DotProduct(gravity, tangent) * tangent;
+		tangentialForce *= 1.8f;
+
+		// Scale tangential force based on angle for smooth energy addition
+		/*float tangAngle = FMath::Atan2(normalizedDirection.Y, normalizedDirection.X);
+		float forceMultiplier = FMath::Clamp(FMath::Cos(tangAngle), 0.0f, 1.0f);
+		tangentialForce *= forceMultiplier;*/
 
 		// Compute torque from tangential force
 		float torque = FVector2D::DotProduct(tangentialForce, tangent) * length;
@@ -67,6 +98,8 @@ public:
 
 		// Update the pendulum position based on the new angle
 		playerBob.position = anchor + FVector2D(FMath::Sin(playerBob.angle), -FMath::Cos(playerBob.angle)) * length;
+	
+		DebugEnergy();
 	}
 
 	void ApplyMotorTorque(float deltaTime) {
@@ -77,7 +110,41 @@ public:
 	}
 
 	void SetMotorSpeed(float speed) {
+		/*motorSpeed += speed;
+		if (motorSpeed > maxMotorTorque)
+		{
+			motorSpeed = maxMotorTorque;
+		}*/
 		motorSpeed = speed;
+	}
+
+	void SlowMotorSpeed(float slowRate = 2.0f)
+	{
+		if (motorSpeed > 0)
+		{
+			motorSpeed -= slowRate;
+		}
+		else if (motorSpeed < 0)
+		{
+			motorSpeed += slowRate;
+		}
+	}
+
+private:
+	void DebugEnergy() {
+		// Calculate height of the bob relative to the anchor
+		float height = anchor.Y - playerBob.position.Y;
+
+		// Compute potential and kinetic energy
+		float potentialEnergy = playerBob.mass * 9.81f * height;
+		float kineticEnergy = 0.5f * playerBob.mass * playerBob.velocity.SizeSquared() +
+			0.5f * playerBob.momentOfInertia * playerBob.angularVelocity * playerBob.angularVelocity;
+
+		float totalEnergy = potentialEnergy + kineticEnergy;
+
+		// Debug output
+		UE_LOG(LogTemp, Warning, TEXT("Potential Energy: %f, Kinetic Energy: %f, Total Energy: %f"),
+			potentialEnergy, kineticEnergy, totalEnergy);
 	}
 };
 

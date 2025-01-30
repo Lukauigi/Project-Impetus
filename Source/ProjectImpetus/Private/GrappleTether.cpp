@@ -23,7 +23,7 @@ void UGrappleTether::PrepareMyPendulumTether(FVector2D playerPos)
 	this->controller = GetWorld()->GetFirstPlayerController();
 	//UE_LOG(LogTemp, Warning, TEXT("Actor Position: X=%f, Y=%f"), playerPos.X, playerPos.Y);
 	pendulum = PendulumSystem(FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
-		playerPos, 1.0f, 125.0f, 0.1f);
+		playerPos, 1.0f, 125.0f, 0.02f);
 }
 
 void UGrappleTether::StartMyPendulumTether(FVector2D anchorPos, FVector2D playerPos)
@@ -32,15 +32,25 @@ void UGrappleTether::StartMyPendulumTether(FVector2D anchorPos, FVector2D player
 
 void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 {
+	float inputStrength = 0.f;
+	bool isInputDetected = false;
 	if (controller->IsInputKeyDown(EKeys::A))
 	{
-		pendulum.SetMotorSpeed(-65.0f);
+		pendulum.SetMotorSpeed(-75.0f);
 		UE_LOG(LogTemp, Warning, TEXT("A key is being held down!"));
+		inputStrength = -40.0f;
+		isInputDetected = true;
 	}
 	else if (controller->IsInputKeyDown(EKeys::D))
 	{
-		pendulum.SetMotorSpeed(65.0f);
+		pendulum.SetMotorSpeed(75.0f);
 		UE_LOG(LogTemp, Warning, TEXT("D key is being held down!"));
+		inputStrength = 40.0f;
+		isInputDetected = true;
+	}
+	else if (controller->IsInputKeyDown(EKeys::S))
+	{
+		pendulum.SlowMotorSpeed();
 	}
 	else {
 		pendulum.SetMotorSpeed(0.f);
@@ -50,11 +60,13 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 		pendulum.playerBob.position.X, pendulum.playerBob.position.Y);*/
 	pendulum.Update(deltaTime);
 
+	FVector pos = pendulum.GetPendulumBobPosition3D();
 	// rendering
 	DrawDebugLine(
 		GetWorld(),
 		FVector(pendulum.anchor.X, -pendulum.anchor.Y, 0.f),
-		FVector(pendulum.playerBob.position.X, -pendulum.playerBob.position.Y, 0.f),
+		//pendulum.GetRenderOfPendulumSimBob(),
+		FVector(pos.X, -pos.Y, 0.f),
 		FColor::Emerald,
 		false,
 		-1.0f,
@@ -63,12 +75,13 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	);
 	DrawDebugCircle(
 		GetWorld(),
-		FVector(pendulum.playerBob.position.X, -pendulum.playerBob.position.Y, 0.f),
+		FVector(pos.X, -pos.Y, 0.f),
+		//pendulum.GetRenderOfPendulumSimBob(),
 		16.0f,
 		32,
 		FColor::Emerald,
 		false,
-		1.0f,
+		0.5f,
 		0,
 		1.0f,
 		FVector(1, 0, 0),
