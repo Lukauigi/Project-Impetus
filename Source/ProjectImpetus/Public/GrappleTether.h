@@ -46,17 +46,24 @@ public:
 		motorSpeed(0.f), maxMotorTorque(250.0f) {}
 	PendulumSystem() {}
 
+	FVector GetPendulumAnchorPosition3D()
+	{
+		return FVector(anchor.X, -anchor.Y, 0.f);
+	}
+
 	FVector2D GetPendulumBobPosition2D()
 	{
 		/*float x = length * FMath::Sin(playerBob.angle);
 		float y = length * FMath::Cos(playerBob.angle);
 		return FVector2D(x, y);*/
-		return FVector2D(playerBob.position.X, playerBob.position.Y);
+
+		// -y since game setup quirk (up decreases y, down increases y)
+		return FVector2D(playerBob.position.X, -playerBob.position.Y);
 	}
 
 	FVector GetPendulumBobPosition3D()
 	{
-		return FVector(playerBob.position.X, playerBob.position.Y, 0.f);
+		return FVector(playerBob.position.X, -playerBob.position.Y, 0.f);
 	}
 
 	void Update(float deltaTime) {
@@ -98,8 +105,32 @@ public:
 
 		// Update the pendulum position based on the new angle
 		playerBob.position = anchor + FVector2D(FMath::Sin(playerBob.angle), -FMath::Cos(playerBob.angle)) * length;
-	
-		DebugEnergy();
+
+		// -----
+		// Convert angular velocity into linear velocity
+		FVector2D radialDirection = (playerBob.position - anchor).GetSafeNormal();
+		FVector2D tangentialDirection(-radialDirection.Y, radialDirection.X);
+
+		// Ensure velocity follows the arc of motion
+		playerBob.velocity = tangentialDirection * (playerBob.angularVelocity * length);
+
+		// Fix any small drift in position
+		FVector2D offset = playerBob.position - anchor;
+		float currentLength = offset.Size();
+		if (!FMath::IsNearlyEqual(currentLength, length, 0.01f))
+		{
+			// Correct position
+			playerBob.position = anchor + offset.GetSafeNormal() * length;
+
+			// Project velocity onto tangential direction to prevent energy loss
+			FVector2D radialDir = offset.GetSafeNormal();
+			FVector2D tangentDir(-radialDir.Y, radialDir.X);
+			playerBob.velocity = FVector2D::DotProduct(playerBob.velocity, tangentDir) * tangentDir;
+		}
+		// -----
+
+		//debug
+		//DebugEnergy();
 	}
 
 	void ApplyMotorTorque(float deltaTime) {

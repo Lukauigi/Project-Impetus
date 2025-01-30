@@ -61,12 +61,21 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	pendulum.Update(deltaTime);
 
 	FVector pos = pendulum.GetPendulumBobPosition3D();
-	// rendering
+
+	// Update Player transform & velocity
+	AActor* player = GetOwner();
+	player->SetActorLocation(pos);
+	if (UPrimitiveComponent* PlayerComp = Cast<UPrimitiveComponent>(player->GetRootComponent()))
+	{
+		FVector NewVelocity(pendulum.playerBob.velocity.X, -pendulum.playerBob.velocity.Y, 0.f);
+		PlayerComp->SetPhysicsLinearVelocity(NewVelocity);
+	}
+
+	// debug rendering
 	DrawDebugLine(
 		GetWorld(),
-		FVector(pendulum.anchor.X, -pendulum.anchor.Y, 0.f),
-		//pendulum.GetRenderOfPendulumSimBob(),
-		FVector(pos.X, -pos.Y, 0.f),
+		pendulum.GetPendulumAnchorPosition3D(),
+		pendulum.GetPendulumBobPosition3D(),
 		FColor::Emerald,
 		false,
 		-1.0f,
@@ -75,8 +84,7 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	);
 	DrawDebugCircle(
 		GetWorld(),
-		FVector(pos.X, -pos.Y, 0.f),
-		//pendulum.GetRenderOfPendulumSimBob(),
+		pendulum.GetPendulumBobPosition3D(),
 		16.0f,
 		32,
 		FColor::Emerald,
