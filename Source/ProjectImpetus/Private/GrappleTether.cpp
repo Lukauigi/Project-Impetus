@@ -2,6 +2,7 @@
 
 
 #include "GrappleTether.h"
+#include "CustomPaperCharacter.h"
 
 // Sets default values for this component's properties
 UGrappleTether::UGrappleTether()
@@ -59,11 +60,27 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	/*UE_LOG(LogTemp, Warning, TEXT("In Update -- Player Bob Position: X=%f, Y=%f"), 
 		pendulum.playerBob.position.X, pendulum.playerBob.position.Y);*/
 	pendulum.Update(deltaTime);
+	AActor* player = GetOwner();
+	
+	if (ACustomPaperCharacter* paper = Cast<ACustomPaperCharacter>(player))
+	{
+		UE_LOG(LogTemp, Log, TEXT("Casted Paper Char"));
+		if (paper->HasCollided)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Has Collided"));
+			UE_LOG(LogTemp, Log, TEXT("(Before) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
+			// Reverse angular velocity to make it bounce back
+			pendulum.playerBob.angularVelocity *= -0.8f;  // Reverse direction and reduce speed slightly for realism
+			UE_LOG(LogTemp, Log, TEXT("(After) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
+			// Optionally reset the collision flag after handling
+			paper->HasCollided = false;
+			
+		}
+	}
 
-	FVector pos = pendulum.GetPendulumBobPosition3D();
 
 	// Update Player transform & velocity
-	AActor* player = GetOwner();
+	FVector pos = pendulum.GetPendulumBobPosition3D();
 	player->SetActorLocation(pos);
 	if (UPrimitiveComponent* PlayerComp = Cast<UPrimitiveComponent>(player->GetRootComponent()))
 	{
