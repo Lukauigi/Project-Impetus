@@ -16,7 +16,8 @@ class PROJECTIMPETUS_API ACustomPaperCharacter : public APaperCharacter
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision Events")
 	bool HasCollided = false;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision Events")
+	FVector HitDirection = FVector(0.f, 0.f, 0.f);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

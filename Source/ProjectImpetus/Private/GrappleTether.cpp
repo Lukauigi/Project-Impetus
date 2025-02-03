@@ -61,23 +61,6 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 		pendulum.playerBob.position.X, pendulum.playerBob.position.Y);*/
 	pendulum.Update(deltaTime);
 	AActor* player = GetOwner();
-	
-	if (ACustomPaperCharacter* paper = Cast<ACustomPaperCharacter>(player))
-	{
-		UE_LOG(LogTemp, Log, TEXT("Casted Paper Char"));
-		if (paper->HasCollided)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Has Collided"));
-			UE_LOG(LogTemp, Log, TEXT("(Before) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
-			// Reverse angular velocity to make it bounce back
-			pendulum.playerBob.angularVelocity *= -0.8f;  // Reverse direction and reduce speed slightly for realism
-			UE_LOG(LogTemp, Log, TEXT("(After) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
-			// Optionally reset the collision flag after handling
-			paper->HasCollided = false;
-			
-		}
-	}
-
 
 	// Update Player transform & velocity
 	FVector pos = pendulum.GetPendulumBobPosition3D();
@@ -87,6 +70,30 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 		FVector NewVelocity(pendulum.playerBob.velocity.X, -pendulum.playerBob.velocity.Y, 0.f);
 		PlayerComp->SetPhysicsLinearVelocity(NewVelocity);
 	}
+
+	// Detect hit on bob 
+	if (ACustomPaperCharacter* paper = Cast<ACustomPaperCharacter>(player))
+	{
+		UE_LOG(LogTemp, Log, TEXT("Casted Paper Char"));
+		if (paper->HasCollided && CurrPendulumBounceCooldown <= 0.0f)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Collision detected at time: %f"), GetWorld()->GetTimeSeconds());
+			UE_LOG(LogTemp, Log, TEXT("Has Collided"));
+			UE_LOG(LogTemp, Log, TEXT("(Before) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
+
+			// Apply force from bouncing on wall
+			pendulum.playerBob.velocity += FVector2D(paper->HitDirection * BounceStrength);
+			pendulum.playerBob.angularVelocity *= -0.8f;  // Reverse direction and reduce speed slightly for realism
+			UE_LOG(LogTemp, Log, TEXT("(After) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
+			
+			// reset vars
+			paper->HasCollided = false;
+			CurrPendulumBounceCooldown = PendulumBounceCooldown;
+		}
+		paper->HasCollided = false;
+	}
+
+	CurrPendulumBounceCooldown -= deltaTime;
 
 	// debug rendering
 	DrawDebugLine(

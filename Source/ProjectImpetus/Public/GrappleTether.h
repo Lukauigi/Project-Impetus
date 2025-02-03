@@ -184,7 +184,7 @@ class PROJECTIMPETUS_API UGrappleTether : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UGrappleTether();
 
@@ -197,10 +197,16 @@ public:
 	void FireGrappleTether();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tether")
 	void RetractGrappleTether();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
 	float GrappleLength;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
 	FVector PendulumPivotPoint;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
+	float PendulumBounceCooldown = 0.1f;
+	float CurrPendulumBounceCooldown = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
+	float BounceStrength = 500.0f;
 
 	void MyPendulumTether(float deltaTime);
 	void PrepareMyPendulumTether(FVector2D playerPos);
