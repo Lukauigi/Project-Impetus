@@ -7,8 +7,7 @@
 #include "GrappleTether.generated.h"
 
 // Constants
-const double MY_PI = 3.141592653589793;
-const double GRAVITY = 9.8; // m/s²
+const double GRAVITY = 9.8;
 
 struct RB2D {
 	FVector2D position;
@@ -53,10 +52,6 @@ public:
 
 	FVector2D GetPendulumBobPosition2D()
 	{
-		/*float x = length * FMath::Sin(playerBob.angle);
-		float y = length * FMath::Cos(playerBob.angle);
-		return FVector2D(x, y);*/
-
 		// -y since game setup quirk (up decreases y, down increases y)
 		return FVector2D(playerBob.position.X, -playerBob.position.Y);
 	}
@@ -72,45 +67,32 @@ public:
 		float distance = direction.Size();
 		FVector2D normalizedDirection = direction / distance;
 
-		// Keep pendulum at fixed length
+		// Setup pendulum & gravity
 		playerBob.position = anchor + normalizedDirection * length;
-
-		// Apply gravity force
-		FVector2D gravity = FVector2D(0.0f, -9.81f) * playerBob.mass;
+		FVector2D gravity = FVector2D(0.0f, -GRAVITY) * playerBob.mass;
 
 		// Project gravity onto the tangential direction
 		FVector2D tangent(-normalizedDirection.Y, normalizedDirection.X);
 		FVector2D tangentialForce = FVector2D::DotProduct(gravity, tangent) * tangent;
 		tangentialForce *= 1.8f;
 
-		// Scale tangential force based on angle for smooth energy addition
-		/*float tangAngle = FMath::Atan2(normalizedDirection.Y, normalizedDirection.X);
-		float forceMultiplier = FMath::Clamp(FMath::Cos(tangAngle), 0.0f, 1.0f);
-		tangentialForce *= forceMultiplier;*/
-
 		// Compute torque from tangential force
 		float torque = FVector2D::DotProduct(tangentialForce, tangent) * length;
-
 		// Apply damping to angular velocity
-		playerBob.angularVelocity *= FMath::Clamp(1.0f - damping * deltaTime, 0.0f, 1.0f);
-
+		playerBob.angularVelocity *= FMath::Clamp(1.0f - damping * deltaTime, 0.f, 1.0f);
 		// Update angular velocity from torque
 		playerBob.angularVelocity += torque / playerBob.momentOfInertia * deltaTime;
-
 		// Apply motor torque
 		ApplyMotorTorque(deltaTime);
 
 		// Update the angle of the pendulum
 		playerBob.angle += playerBob.angularVelocity * deltaTime;
-
 		// Update the pendulum position based on the new angle
 		playerBob.position = anchor + FVector2D(FMath::Sin(playerBob.angle), -FMath::Cos(playerBob.angle)) * length;
 
-		// -----
 		// Convert angular velocity into linear velocity
 		FVector2D radialDirection = (playerBob.position - anchor).GetSafeNormal();
 		FVector2D tangentialDirection(-radialDirection.Y, radialDirection.X);
-
 		// Ensure velocity follows the arc of motion
 		playerBob.velocity = tangentialDirection * (playerBob.angularVelocity * length);
 
@@ -127,10 +109,6 @@ public:
 			FVector2D tangentDir(-radialDir.Y, radialDir.X);
 			playerBob.velocity = FVector2D::DotProduct(playerBob.velocity, tangentDir) * tangentDir;
 		}
-		// -----
-
-		//debug
-		//DebugEnergy();
 	}
 
 	void ApplyMotorTorque(float deltaTime) {
@@ -141,11 +119,6 @@ public:
 	}
 
 	void SetMotorSpeed(float speed) {
-		/*motorSpeed += speed;
-		if (motorSpeed > maxMotorTorque)
-		{
-			motorSpeed = maxMotorTorque;
-		}*/
 		motorSpeed = speed;
 	}
 
@@ -203,14 +176,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
 	FVector PendulumPivotPoint;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
-	float PendulumBounceCooldown = 0.1f;
-	float CurrPendulumBounceCooldown = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gameplay")
-	float BounceStrength = 500.0f;
+	float PendulumBounceCooldown = 0.18f;
+	float TimeSincePendulumBounce = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pendulum Gameplay")
+	float BounceStrength = 2000.0f;
 
 	void MyPendulumTether(float deltaTime);
 	void PrepareMyPendulumTether(FVector2D playerPos);
-	void StartMyPendulumTether(FVector2D anchorPos, FVector2D playerPos);
 	void SolveMyPendulumTether(float deltaTime);
 
 protected:

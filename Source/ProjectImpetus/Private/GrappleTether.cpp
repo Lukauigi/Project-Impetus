@@ -22,32 +22,19 @@ void UGrappleTether::MyPendulumTether(float deltaTime)
 void UGrappleTether::PrepareMyPendulumTether(FVector2D playerPos)
 {
 	this->controller = GetWorld()->GetFirstPlayerController();
-	//UE_LOG(LogTemp, Warning, TEXT("Actor Position: X=%f, Y=%f"), playerPos.X, playerPos.Y);
 	pendulum = PendulumSystem(FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
 		playerPos, 1.0f, 125.0f, 0.02f);
 }
 
-void UGrappleTether::StartMyPendulumTether(FVector2D anchorPos, FVector2D playerPos)
-{
-}
-
 void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 {
-	float inputStrength = 0.f;
-	bool isInputDetected = false;
 	if (controller->IsInputKeyDown(EKeys::A))
 	{
 		pendulum.SetMotorSpeed(-75.0f);
-		UE_LOG(LogTemp, Warning, TEXT("A key is being held down!"));
-		inputStrength = -40.0f;
-		isInputDetected = true;
 	}
 	else if (controller->IsInputKeyDown(EKeys::D))
 	{
 		pendulum.SetMotorSpeed(75.0f);
-		UE_LOG(LogTemp, Warning, TEXT("D key is being held down!"));
-		inputStrength = 40.0f;
-		isInputDetected = true;
 	}
 	else if (controller->IsInputKeyDown(EKeys::S))
 	{
@@ -57,8 +44,6 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 		pendulum.SetMotorSpeed(0.f);
 	}
 
-	/*UE_LOG(LogTemp, Warning, TEXT("In Update -- Player Bob Position: X=%f, Y=%f"), 
-		pendulum.playerBob.position.X, pendulum.playerBob.position.Y);*/
 	pendulum.Update(deltaTime);
 	AActor* player = GetOwner();
 
@@ -74,26 +59,19 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	// Detect hit on bob 
 	if (ACustomPaperCharacter* paper = Cast<ACustomPaperCharacter>(player))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Casted Paper Char"));
-		if (paper->HasCollided && CurrPendulumBounceCooldown <= 0.0f)
+		if (paper->HasCollided && TimeSincePendulumBounce <= 0.f)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Collision detected at time: %f"), GetWorld()->GetTimeSeconds());
-			UE_LOG(LogTemp, Log, TEXT("Has Collided"));
-			UE_LOG(LogTemp, Log, TEXT("(Before) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
-
 			// Apply force from bouncing on wall
 			pendulum.playerBob.velocity += FVector2D(paper->HitDirection * BounceStrength);
 			pendulum.playerBob.angularVelocity *= -0.8f;  // Reverse direction and reduce speed slightly for realism
-			UE_LOG(LogTemp, Log, TEXT("(After) Angular Velocity=%f"), pendulum.playerBob.angularVelocity);
 			
 			// reset vars
-			paper->HasCollided = false;
-			CurrPendulumBounceCooldown = PendulumBounceCooldown;
+			TimeSincePendulumBounce = PendulumBounceCooldown;
 		}
 		paper->HasCollided = false;
 	}
 
-	CurrPendulumBounceCooldown -= deltaTime;
+	TimeSincePendulumBounce -= deltaTime;
 
 	// debug rendering
 	DrawDebugLine(
