@@ -4,6 +4,7 @@
 #include "PlayerStateManagerComponent.h"
 #include "PlayerRoamingState.h"
 #include "PlayerTetheredState.h"
+#include "PlayerPendulumState.h"
 
 // Sets default values for this component's properties
 UPlayerStateManagerComponent::UPlayerStateManagerComponent()
@@ -49,13 +50,17 @@ void UPlayerStateManagerComponent::InitFSM()
 		//UE_LOG(LogTemp, Log, TEXT("We got the IMC??? Let's try clearing it."));
 		this->m_InputSubSystem = InputSubsystem;
 
+		// Create states from class refs
 		this->RoamingState = NewObject<UPlayerRoamingState>(this, RoamingStateClass);
 		this->TetheredState = NewObject<UPlayerTetheredState>(this, TetheredStateClass);
+		this->PendulumState = NewObject<UPlayerPendulumState>(this, PendulumStateClass);
 
 		UEnhancedInputComponent* InputComponent = Cast<UEnhancedInputComponent>(m_Player->InputComponent);
 
+		// Init States
 		this->RoamingState->InitState(m_InputSubSystem, InputComponent, GetOwner());
 		this->TetheredState->InitState(m_InputSubSystem, InputComponent, GetOwner());
+		this->PendulumState->InitState(m_InputSubSystem, InputComponent, GetOwner());
 
 		this->m_CurrentState = this->RoamingState;
 		this->m_CurrentState->EnterState();

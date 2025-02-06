@@ -8,6 +8,7 @@
 #include "PlayerBaseState.h"
 #include "PlayerRoamingState.h"
 #include "PlayerTetheredState.h"
+#include "PlayerPendulumState.h"
 // UE5 Plugins
 //#include "PaperCharacter.h"
 //#include "EnhancedInputComponent.h"
@@ -23,11 +24,13 @@ class PROJECTIMPETUS_API UPlayerStateManagerComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	// State Setters, set in BP
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
 	TSubclassOf<UPlayerRoamingState> RoamingStateClass;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
 	TSubclassOf<UPlayerTetheredState> TetheredStateClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
+	TSubclassOf<UPlayerPendulumState> PendulumStateClass;
 
 	// Sets default values for this component's properties
 	UPlayerStateManagerComponent();
@@ -61,5 +64,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "States", meta = (AllowPrivateAccess = "true"))
 	UPlayerTetheredState* TetheredState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "States", meta = (AllowPrivateAccess = "true"))
+	UPlayerPendulumState* PendulumState;
 		
 };
