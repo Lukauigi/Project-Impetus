@@ -73,8 +73,16 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 
 	TimeSincePendulumBounce -= deltaTime;
 
+	/*FName FunctionName = "UpdateTetherVisuals";
+	UFunction* Function = this->FindFunction(FunctionName);
+	if (Function)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("called BP func from c++ pendulum"));
+		this->ProcessEvent(Function, nullptr);
+	}*/
+
 	// debug rendering
-	DrawDebugLine(
+	/*DrawDebugLine(
 		GetWorld(),
 		pendulum.GetPendulumAnchorPosition3D(),
 		pendulum.GetPendulumBobPosition3D(),
@@ -83,7 +91,7 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 		-1.0f,
 		0,
 		1.0f
-	);
+	);*/
 	DrawDebugCircle(
 		GetWorld(),
 		pendulum.GetPendulumBobPosition3D(),
