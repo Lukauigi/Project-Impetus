@@ -29,20 +29,34 @@ struct RB2D {
 class PendulumSystem {
 public:
 	FVector2D anchor;
+	FVector2D orientation;
 	RB2D playerBob;
 	float length;
 	float damping;
 	float motorSpeed;
 	float maxMotorTorque;
+	bool firstLatch;
 
 	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass, 
-		float rodLength, float dampingFactor) : anchor(anchorPoint), playerBob(bobPosition, 
-			bobMass, 1.65f * bobMass * rodLength), length(rodLength), damping(dampingFactor), 
-		motorSpeed(0.f), maxMotorTorque(250.0f) {}
+		float rodLength, float dampingFactor) : 
+		anchor(anchorPoint), 
+		playerBob(bobPosition, bobMass, 1.65f * bobMass * rodLength), 
+		orientation((bobPosition - anchorPoint).GetSafeNormal()),
+		length(rodLength), 
+		damping(dampingFactor),
+		motorSpeed(0.f), 
+		maxMotorTorque(250.0f), 
+		firstLatch(true) {}
 	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass,
-		float rodLength, float dampingFactor, float startAngle) : anchor(anchorPoint), playerBob(bobPosition,
-			bobMass, 1.65f * bobMass * rodLength, startAngle), length(rodLength), damping(dampingFactor),
-		motorSpeed(0.f), maxMotorTorque(250.0f) {}
+		float rodLength, float dampingFactor, float startAngle) : 
+		anchor(anchorPoint), 
+		playerBob(bobPosition, bobMass, 1.65f * bobMass * rodLength, startAngle), 
+		orientation((bobPosition - anchorPoint).GetSafeNormal()),
+		length(rodLength), 
+		damping(dampingFactor),
+		motorSpeed(0.f), 
+		maxMotorTorque(250.0f), 
+		firstLatch(true) {}
 	PendulumSystem() {}
 
 	FVector GetPendulumAnchorPosition3D()
@@ -62,14 +76,29 @@ public:
 	}
 
 	void Update(float deltaTime) {
+		// Ensure pendulum opposite direction from tethered point
+		if (firstLatch) {
+			playerBob.angle = FMath::Atan2(orientation.X, -orientation.Y);
+			playerBob.angularVelocity = 0.0f; // Start with zero rotational speed
+			playerBob.velocity = FVector2D::ZeroVector;
+			firstLatch = false;
+		}
+
 		// Calculate direction and enforce hinge constraint
 		FVector2D direction = playerBob.position - anchor;
 		float distance = direction.Size();
 		FVector2D normalizedDirection = direction / distance;
+		UE_LOG(LogTemp, Warning, TEXT("Pendulum Dir: (%f, %f)"), normalizedDirection.X, normalizedDirection.Y);
+		UE_LOG(LogTemp, Warning, TEXT("Orientation: (%f, %f)"), orientation.X, orientation.Y);
 
 		// Setup pendulum & gravity
 		playerBob.position = anchor + normalizedDirection * length;
-		FVector2D gravity = FVector2D(0.0f, -GRAVITY) * playerBob.mass;
+		FVector2D gravityDir = FVector2D(orientation.X, orientation.Y);
+		FVector2D gravity = (gravityDir * GRAVITY) * playerBob.mass;
+
+		UE_LOG(LogTemp, Warning, TEXT("PlayerBob: (%f, %f)"), playerBob.position.X, playerBob.position.Y);
+		UE_LOG(LogTemp, Warning, TEXT("GravityDir: (%f, %f)"), gravityDir.X, gravityDir.Y);
+		UE_LOG(LogTemp, Warning, TEXT("Gravity: (%f, %f)"), gravity.X, gravity.Y);
 
 		// Project gravity onto the tangential direction
 		FVector2D tangent(-normalizedDirection.Y, normalizedDirection.X);
@@ -183,7 +212,7 @@ public:
 	float BounceStrength = 2000.0f;
 
 	void MyPendulumTether(float deltaTime);
-	void PrepareMyPendulumTether(FVector2D playerPos);
+	void PrepareMyPendulumTether(FVector playerPos, float tetherLength);
 	void SolveMyPendulumTether(float deltaTime);
 
 protected:

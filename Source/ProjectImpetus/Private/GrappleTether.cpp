@@ -19,11 +19,16 @@ void UGrappleTether::MyPendulumTether(float deltaTime)
 	SolveMyPendulumTether(deltaTime);
 }
 
-void UGrappleTether::PrepareMyPendulumTether(FVector2D playerPos)
+void UGrappleTether::PrepareMyPendulumTether(FVector playerPos, float tetherLength)
 {
 	this->controller = GetWorld()->GetFirstPlayerController();
-	pendulum = PendulumSystem(FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
-		playerPos, 1.0f, 125.0f, 0.02f);
+	pendulum = PendulumSystem(
+		FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
+		FVector2D(playerPos.X, -playerPos.Y),
+		1.0f,
+		tetherLength,
+		0.02f
+	);
 }
 
 void UGrappleTether::SolveMyPendulumTether(float deltaTime)
@@ -43,10 +48,9 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	else {
 		pendulum.SetMotorSpeed(0.f);
 	}
-
 	pendulum.Update(deltaTime);
-	AActor* player = GetOwner();
 
+	AActor* player = GetOwner();
 	// Update Player transform & velocity
 	FVector pos = pendulum.GetPendulumBobPosition3D();
 	player->SetActorLocation(pos);
