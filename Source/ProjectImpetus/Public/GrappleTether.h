@@ -39,10 +39,10 @@ public:
 
 	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass, 
 		float rodLength, float dampingFactor) : 
-		anchor(anchorPoint), 
+		anchor(anchorPoint),
 		playerBob(bobPosition, bobMass, 1.65f * bobMass * rodLength), 
 		orientation((bobPosition - anchorPoint).GetSafeNormal()),
-		length(rodLength), 
+		length(rodLength),
 		damping(dampingFactor),
 		motorSpeed(0.f), 
 		maxMotorTorque(250.0f), 
@@ -88,17 +88,17 @@ public:
 		FVector2D direction = playerBob.position - anchor;
 		float distance = direction.Size();
 		FVector2D normalizedDirection = direction / distance;
-		UE_LOG(LogTemp, Warning, TEXT("Pendulum Dir: (%f, %f)"), normalizedDirection.X, normalizedDirection.Y);
-		UE_LOG(LogTemp, Warning, TEXT("Orientation: (%f, %f)"), orientation.X, orientation.Y);
+		/*UE_LOG(LogTemp, Warning, TEXT("Pendulum Dir: (%f, %f)"), normalizedDirection.X, normalizedDirection.Y);
+		UE_LOG(LogTemp, Warning, TEXT("Orientation: (%f, %f)"), orientation.X, orientation.Y);*/
 
 		// Setup pendulum & gravity
 		playerBob.position = anchor + normalizedDirection * length;
 		FVector2D gravityDir = FVector2D(orientation.X, orientation.Y);
 		FVector2D gravity = (gravityDir * GRAVITY) * playerBob.mass;
 
-		UE_LOG(LogTemp, Warning, TEXT("PlayerBob: (%f, %f)"), playerBob.position.X, playerBob.position.Y);
+		/*UE_LOG(LogTemp, Warning, TEXT("PlayerBob: (%f, %f)"), playerBob.position.X, playerBob.position.Y);
 		UE_LOG(LogTemp, Warning, TEXT("GravityDir: (%f, %f)"), gravityDir.X, gravityDir.Y);
-		UE_LOG(LogTemp, Warning, TEXT("Gravity: (%f, %f)"), gravity.X, gravity.Y);
+		UE_LOG(LogTemp, Warning, TEXT("Gravity: (%f, %f)"), gravity.X, gravity.Y);*/
 
 		// Project gravity onto the tangential direction
 		FVector2D tangent(-normalizedDirection.Y, normalizedDirection.X);
@@ -201,12 +201,14 @@ public:
 	void RetractGrappleTether();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
-	float GrappleLength;
+	float MaxGrappleLength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
+	float CurrGrappleLength = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
 	FVector PendulumPivotPoint;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
 	float PendulumBounceCooldown = 0.18f;
-	float TimeSincePendulumBounce = 0.0f;
+	float TimeSincePendulumBounce = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pendulum Gameplay")
 	float BounceStrength = 2000.0f;
