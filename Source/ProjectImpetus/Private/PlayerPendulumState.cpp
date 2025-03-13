@@ -27,8 +27,7 @@ void UPlayerPendulumState::EnterState()
 	}
 
 	this->m_GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
-	FVector pos = m_Player->GetActorLocation();
-	m_GrappleTetherComponent->PrepareMyPendulumTether(FVector2D(pos.X, -pos.Y));
+	m_GrappleTetherComponent->PrepareMyPendulumTether(m_Player->GetActorLocation(), m_GrappleTetherComponent->CurrGrappleLength);
 }
 
 void UPlayerPendulumState::ExitState()
