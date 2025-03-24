@@ -78,7 +78,7 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	TimeSincePendulumBounce -= deltaTime;
 
 	// debug rendering
-	DrawDebugCircle(
+	/*DrawDebugCircle(
 		GetWorld(),
 		pendulum.GetPendulumBobPosition3D(),
 		16.0f,
@@ -91,7 +91,7 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 		FVector(1, 0, 0),
 		FVector(0, 1, 0),
 		false
-	);
+	);*/
 }
 
 // Called when the game starts
