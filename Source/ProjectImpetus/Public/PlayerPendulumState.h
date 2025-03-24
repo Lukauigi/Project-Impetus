@@ -22,5 +22,6 @@ public:
 	
 private:
 	void DisableTether(const FInputActionValue& Value);
+	void HandlePendulumInput(const FInputActionValue& Value);
 	UGrappleTether* m_GrappleTetherComponent = nullptr;
 };

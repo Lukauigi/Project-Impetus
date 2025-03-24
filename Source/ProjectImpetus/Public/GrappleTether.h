@@ -36,6 +36,7 @@ public:
 	float motorSpeed;
 	float maxMotorTorque;
 	bool firstLatch;
+	float motorSpeedFactor = 75.0f;
 
 	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass, 
 		float rodLength, float dampingFactor) : 
@@ -44,7 +45,7 @@ public:
 		orientation((bobPosition - anchorPoint).GetSafeNormal()),
 		length(rodLength),
 		damping(dampingFactor),
-		motorSpeed(0.f), 
+		motorSpeed(0.f),
 		maxMotorTorque(250.0f), 
 		firstLatch(true) {}
 	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass,
@@ -141,7 +142,8 @@ public:
 	}
 
 	void ApplyMotorTorque(float deltaTime) {
-		float desiredAngularVelocity = motorSpeed;  // Target motor speed
+		float desiredAngularVelocity = motorSpeed;
+		UE_LOG(LogTemp, Log, TEXT("Desired angular velocity: %f"), motorSpeed);
 		float motorTorque = FMath::Clamp(desiredAngularVelocity - playerBob.angularVelocity,
 			-maxMotorTorque, maxMotorTorque);
 		playerBob.angularVelocity += motorTorque / playerBob.momentOfInertia * deltaTime;
@@ -149,35 +151,6 @@ public:
 
 	void SetMotorSpeed(float speed) {
 		motorSpeed = speed;
-	}
-
-	void SlowMotorSpeed(float slowRate = 2.0f)
-	{
-		if (motorSpeed > 0)
-		{
-			motorSpeed -= slowRate;
-		}
-		else if (motorSpeed < 0)
-		{
-			motorSpeed += slowRate;
-		}
-	}
-
-private:
-	void DebugEnergy() {
-		// Calculate height of the bob relative to the anchor
-		float height = anchor.Y - playerBob.position.Y;
-
-		// Compute potential and kinetic energy
-		float potentialEnergy = playerBob.mass * 9.81f * height;
-		float kineticEnergy = 0.5f * playerBob.mass * playerBob.velocity.SizeSquared() +
-			0.5f * playerBob.momentOfInertia * playerBob.angularVelocity * playerBob.angularVelocity;
-
-		float totalEnergy = potentialEnergy + kineticEnergy;
-
-		// Debug output
-		UE_LOG(LogTemp, Warning, TEXT("Potential Energy: %f, Kinetic Energy: %f, Total Energy: %f"),
-			potentialEnergy, kineticEnergy, totalEnergy);
 	}
 };
 
@@ -216,6 +189,7 @@ public:
 	void MyPendulumTether(float deltaTime);
 	void PrepareMyPendulumTether(FVector playerPos, float tetherLength);
 	void SolveMyPendulumTether(float deltaTime);
+	void PendulumPlayerInput(float axisValue);
 
 protected:
 	// Called when the game starts
@@ -227,5 +201,5 @@ public:
 
 private:
 	PendulumSystem pendulum;
-	APlayerController* controller;		
+	float input;
 };

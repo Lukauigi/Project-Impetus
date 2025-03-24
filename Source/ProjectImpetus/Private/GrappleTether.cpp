@@ -21,7 +21,6 @@ void UGrappleTether::MyPendulumTether(float deltaTime)
 
 void UGrappleTether::PrepareMyPendulumTether(FVector playerPos, float tetherLength)
 {
-	this->controller = GetWorld()->GetFirstPlayerController();
 	pendulum = PendulumSystem(
 		FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
 		FVector2D(playerPos.X, -playerPos.Y),
@@ -33,21 +32,16 @@ void UGrappleTether::PrepareMyPendulumTether(FVector playerPos, float tetherLeng
 
 void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 {
-	if (controller->IsInputKeyDown(EKeys::A))
+	if (input != 0.f)
 	{
-		pendulum.SetMotorSpeed(-75.0f);
-	}
-	else if (controller->IsInputKeyDown(EKeys::D))
-	{
-		pendulum.SetMotorSpeed(75.0f);
-	}
-	else if (controller->IsInputKeyDown(EKeys::S))
-	{
-		pendulum.SlowMotorSpeed();
+		pendulum.SetMotorSpeed(input * pendulum.motorSpeedFactor);
 	}
 	else {
 		pendulum.SetMotorSpeed(0.f);
 	}
+
+	UE_LOG(LogTemp, Log, TEXT("Input: %f"), input);
+	UE_LOG(LogTemp, Log, TEXT("Motor Speed: %f"), pendulum.motorSpeed);
 	pendulum.Update(deltaTime);
 
 	AActor* player = GetOwner();
@@ -76,6 +70,12 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 	}
 
 	TimeSincePendulumBounce -= deltaTime;
+	input = 0.f;
+}
+
+void UGrappleTether::PendulumPlayerInput(float axisValue)
+{
+	input = axisValue;
 }
 
 // Called when the game starts
@@ -94,4 +94,3 @@ void UGrappleTether::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 	// ...
 }
-
