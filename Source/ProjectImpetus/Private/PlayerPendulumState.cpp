@@ -11,6 +11,7 @@ void UPlayerPendulumState::EnterState()
 
 	UE_LOG(LogTemp, Log, TEXT("Entering Pendulum State"));
 	const TArray<FEnhancedActionKeyMapping>& Mappings = m_IMC->GetMappings();
+	//FInputBindingHandle Handle;
 	for (const FEnhancedActionKeyMapping& Mapping : Mappings)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Mapping: Action %s, Key %s"), *Mapping.Action->GetName(), *Mapping.Key.ToString());
@@ -21,6 +22,17 @@ void UPlayerPendulumState::EnterState()
 				ETriggerEvent::Triggered,
 				this,
 				&UPlayerPendulumState::DisableTether
+			);
+			m_BoundHandles.Add(Handle);
+		}
+
+		if (Mapping.Action->GetFName() == "IA_PendulumMovement")
+		{
+			FInputBindingHandle Handle = m_EnhancedInputComponent->BindAction(
+				Mapping.Action,
+				ETriggerEvent::Triggered,
+				this,
+				&UPlayerPendulumState::HandlePendulumInput
 			);
 			m_BoundHandles.Add(Handle);
 		}
@@ -47,4 +59,11 @@ void UPlayerPendulumState::DisableTether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
 	m_GrappleTetherComponent->RetractGrappleTether();
+	m_GrappleTetherComponent->DisablePendulum();
+}
+
+void UPlayerPendulumState::HandlePendulumInput(const FInputActionValue& Value)
+{
+	float AxisValue = Value.Get<float>();
+	m_GrappleTetherComponent->PendulumPlayerInput(AxisValue);
 }
