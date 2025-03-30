@@ -4,29 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PendulumSystem.h"
 #include "GrappleTether.generated.h"
 
-// Constants
-const double GRAVITY = 9.8;
 
-struct RB2D {
-	FVector2D position;
-	FVector2D velocity;
-	float angle;
-	float angularVelocity;
-	float angularAcceleration;
-	float mass;
-	float momentOfInertia;
-
-	RB2D(FVector2D pos, float mass, float inertia) : position(pos), velocity(0.f, 0.f), 
-		angle(0.f), angularVelocity(0.f), angularAcceleration(0.f), mass(mass), momentOfInertia(inertia) {}
-	// init with starting angle
-	RB2D(FVector2D pos, float mass, float inertia, float angle) : position(pos), velocity(0.f, 0.f),
-		angle(angle), angularVelocity(0.f), angularAcceleration(0.f), mass(mass), momentOfInertia(inertia) {}
-	RB2D() {}
-};
-
-class PendulumSystem {
+class PendulumSystemOld {
 public:
 	FVector2D anchor;
 	FVector2D orientation;
@@ -38,7 +20,7 @@ public:
 	bool firstLatch;
 	float motorSpeedFactor = 75.0f;
 
-	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass, 
+	PendulumSystemOld(FVector2D anchorPoint, FVector2D bobPosition, float bobMass, 
 		float rodLength, float dampingFactor) : 
 		anchor(anchorPoint),
 		playerBob(bobPosition, bobMass, 1.65f * bobMass * rodLength), 
@@ -48,7 +30,7 @@ public:
 		motorSpeed(0.f),
 		maxMotorTorque(250.0f), 
 		firstLatch(true) {}
-	PendulumSystem(FVector2D anchorPoint, FVector2D bobPosition, float bobMass,
+	PendulumSystemOld(FVector2D anchorPoint, FVector2D bobPosition, float bobMass,
 		float rodLength, float dampingFactor, float startAngle) : 
 		anchor(anchorPoint), 
 		playerBob(bobPosition, bobMass, 1.65f * bobMass * rodLength, startAngle), 
@@ -58,7 +40,7 @@ public:
 		motorSpeed(0.f), 
 		maxMotorTorque(250.0f), 
 		firstLatch(true) {}
-	PendulumSystem() {}
+	PendulumSystemOld() {}
 
 	FVector GetPendulumAnchorPosition3D()
 	{
@@ -180,7 +162,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
 	FVector PendulumPivotPoint;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
-	float PendulumBounceCooldown = 0.18f;
+	float PendulumBounceCooldown = 1.18f;
 	float TimeSincePendulumBounce = 0.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pendulum Gameplay")
@@ -200,6 +182,10 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	PendulumSystem pendulum;
+	PendulumSystemOld pendulum;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pendulum", meta = (AllowPrivateAccess = "true")) // don't init in cpp and just assign via BP next time
+	UPendulumSystem* uPendulumSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pendulum", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UPendulumSystem> PendulumSystemClass;
 	float input;
 };

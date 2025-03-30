@@ -64,6 +64,5 @@ void UPlayerPendulumState::DisableTether(const FInputActionValue& Value)
 void UPlayerPendulumState::HandlePendulumInput(const FInputActionValue& Value)
 {
 	float AxisValue = Value.Get<float>();
-	//UE_LOG(LogTemp, Log, TEXT("PState Move Input: %f"), AxisValue);
 	m_GrappleTetherComponent->PendulumPlayerInput(AxisValue);
 }
