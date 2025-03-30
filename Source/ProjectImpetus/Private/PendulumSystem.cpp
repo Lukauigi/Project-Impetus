@@ -4,21 +4,14 @@
 #include "PendulumSystem.h"
 
 void UPendulumSystem::Init(const FVector2D BobPos, const FVector2D AnchorPos,
-	const float TetherLength)
+	const float TetherLength, const float playerMass, const float inertia)
 {
 	anchor = AnchorPos;
 	orientation = (BobPos - AnchorPos).GetSafeNormal();
 	length = TetherLength;
 	firstLatch = true;
-
-	playerBob = RB2D(BobPos, 1.0f, 1.65 * 1.0f * length);
-	/*playerBob.position = PlayerPos;
-	playerBob.velocity = FVector2D(0.f, 0.f);
-	playerBob.angle = 0.f;
-	playerBob.angularVelocity = 0.f;
-	playerBob.angularAcceleration = 0.f;
-	playerBob.mass = 1.0f;
-	playerBob.momentOfInertia = 1.65 * 1.0f * length;*/
+	isActive = true;
+	playerBob = RB2D(BobPos, playerMass, inertia * playerMass * length);
 }
 
 void UPendulumSystem::Update(const float DeltaTime)
@@ -85,6 +78,7 @@ void UPendulumSystem::Update(const float DeltaTime)
 		FVector2D tangentDir(-radialDir.Y, radialDir.X);
 		playerBob.velocity = FVector2D::DotProduct(playerBob.velocity, tangentDir) * tangentDir;
 	}
+	IterateTimeSinceBounce(DeltaTime);
 }
 
 void UPendulumSystem::Bounce(const FVector Direction)
@@ -92,16 +86,15 @@ void UPendulumSystem::Bounce(const FVector Direction)
 	UE_LOG(LogTemp, Log, TEXT("We bounce"));
 	playerBob.velocity += FVector2D(Direction * BounceStrength);
 	playerBob.angularVelocity *= -AngularVelocityMomentumLossFactor;
-
-	//TimeSincePendulumBounce = PendulumBounceCooldown;
+	timeSincePendulumBounce = 0.0f;
 }
 
 void UPendulumSystem::IterateTimeSinceBounce(const float DeltaTime)
 {
-	TimeSincePendulumBounce += DeltaTime;
-	if (TimeSincePendulumBounce > PendulumBounceCooldown)
+	timeSincePendulumBounce += DeltaTime;
+	if (timeSincePendulumBounce > PendulumBounceCooldown)
 	{
-		TimeSincePendulumBounce = PendulumBounceCooldown;
+		timeSincePendulumBounce = PendulumBounceCooldown;
 	}
 }
 

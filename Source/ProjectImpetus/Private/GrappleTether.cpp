@@ -21,55 +21,48 @@ void UGrappleTether::MyPendulumTether(float deltaTime)
 
 void UGrappleTether::PrepareMyPendulumTether(FVector playerPos, float tetherLength)
 {
-	/*pendulum = PendulumSystemOld(
-		FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
-		FVector2D(playerPos.X, -playerPos.Y),
-		1.0f,
-		tetherLength,
-		0.02f
-	);*/
+	if (AActor* Owner = GetOwner()) // Get the owning Actor
+	{
+		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(Owner->GetRootComponent()))
+		{
+			float Mass = RootPrimitive->GetMass();
+			UE_LOG(LogTemp, Log, TEXT("Pawn's Mass: %f"), Mass);
 
-	UE_LOG(LogTemp, Log, TEXT("Init Call"));
-	uPendulumSystem->Init(
-		FVector2D(playerPos.X, -playerPos.Y),
-		FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
-		tetherLength
-	);
-
+			uPendulumSystem->Init(
+				FVector2D(playerPos.X, -playerPos.Y),
+				FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
+				tetherLength, Mass
+			);
+		}
+		else
+		{
+			uPendulumSystem->Init(
+				FVector2D(playerPos.X, -playerPos.Y),
+				FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
+				tetherLength
+			);
+		}
+	}
 }
 
 void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 {
-	/*if (input != 0.f)
-	{
-		pendulum.SetMotorSpeed(input * pendulum.motorSpeedFactor);
-	}
-	else {
-		pendulum.SetMotorSpeed(0.f);
-	}*/
+	if (!uPendulumSystem->GetIsActive()) { return; } // cancel any pendulum activity if not active
 
 	if (input != 0.f)
 	{
-		uPendulumSystem->SetMotorSpeed(input * pendulum.motorSpeedFactor);
+		uPendulumSystem->SetMotorSpeed(input * uPendulumSystem->GetMotorSpeedFactor());
 	}
 	else {
 		uPendulumSystem->SetMotorSpeed(0.f);
 	}
-
-	UE_LOG(LogTemp, Log, TEXT("deltaTime: %f"), deltaTime);
-	/*UE_LOG(LogTemp, Log, TEXT("Input: %f"), input);
-	UE_LOG(LogTemp, Log, TEXT("Motor Speed: %f"), pendulum.motorSpeed);*/
-	//pendulum.Update(deltaTime);
 	uPendulumSystem->Update(deltaTime);
 
 	AActor* player = GetOwner();
-	// Update Player transform & velocity
-	//FVector pos = pendulum.GetPendulumBobPosition3D();
 	FVector pos = uPendulumSystem->GetPendulumBobPosition3D();
 	player->SetActorLocation(pos);
 	if (UPrimitiveComponent* PlayerComp = Cast<UPrimitiveComponent>(player->GetRootComponent()))
 	{
-		//FVector NewVelocity(pendulum.playerBob.velocity.X, -pendulum.playerBob.velocity.Y, 0.f);
 		FVector NewVelocity(uPendulumSystem->GetPlayerBob().velocity.X, 
 			-uPendulumSystem->GetPlayerBob().velocity.Y, 0.f);
 		PlayerComp->SetPhysicsLinearVelocity(NewVelocity);
@@ -81,24 +74,10 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 		if (paper->HasCollided && uPendulumSystem->IsHitAllowed())
 		{
 			uPendulumSystem->Bounce(paper->HitDirection);
-			uPendulumSystem->TimeSincePendulumBounce = 0.0f;
 		}
-
-		//if (paper->HasCollided && TimeSincePendulumBounce <= 0.f)
-		//{
-		//	// Apply force from bouncing on wall
-		//	pendulum.playerBob.velocity += FVector2D(paper->HitDirection * BounceStrength);
-		//	pendulum.playerBob.angularVelocity *= -0.8f;  // Reverse direction and reduce speed slightly for realism
-
-		//	// reset vars
-		//	TimeSincePendulumBounce = PendulumBounceCooldown;
-		//}
 		paper->HasCollided = false;
 	}
 
-	//TimeSincePendulumBounce -= deltaTime;
-	uPendulumSystem->IterateTimeSinceBounce(deltaTime);
-	//uPendulumSystem->TimeSincePendulumBounce -= deltaTime;
 	input = 0.f;
 }
 

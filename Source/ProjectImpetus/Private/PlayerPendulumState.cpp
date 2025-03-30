@@ -59,6 +59,7 @@ void UPlayerPendulumState::DisableTether(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
 	m_GrappleTetherComponent->RetractGrappleTether();
+	m_GrappleTetherComponent->DisablePendulum();
 }
 
 void UPlayerPendulumState::HandlePendulumInput(const FInputActionValue& Value)
