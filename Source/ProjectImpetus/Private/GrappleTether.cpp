@@ -21,6 +21,7 @@ void UGrappleTether::MyPendulumTether(float deltaTime)
 
 void UGrappleTether::PrepareMyPendulumTether(FVector playerPos, float tetherLength)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Starting to prepare pend"));
 	if (AActor* Owner = GetOwner()) // Get the owning Actor
 	{
 		if (UPrimitiveComponent* RootPrimitive = Cast<UPrimitiveComponent>(Owner->GetRootComponent()))
@@ -33,6 +34,7 @@ void UGrappleTether::PrepareMyPendulumTether(FVector playerPos, float tetherLeng
 				FVector2D(PendulumPivotPoint.X, -PendulumPivotPoint.Y),
 				tetherLength, Mass
 			);
+			UE_LOG(LogTemp, Warning, TEXT("After pend init"));
 		}
 		else
 		{
@@ -60,23 +62,28 @@ void UGrappleTether::SolveMyPendulumTether(float deltaTime)
 
 	AActor* player = GetOwner();
 	FVector pos = uPendulumSystem->GetPendulumBobPosition3D();
-	player->SetActorLocation(pos);
-	if (UPrimitiveComponent* PlayerComp = Cast<UPrimitiveComponent>(player->GetRootComponent()))
-	{
-		FVector NewVelocity(uPendulumSystem->GetPlayerBob().velocity.X, 
-			-uPendulumSystem->GetPlayerBob().velocity.Y, 0.f);
-		PlayerComp->SetPhysicsLinearVelocity(NewVelocity);
-	}
 
-	// Detect hit on bob 
-	if (ACustomPaperCharacter* paper = Cast<ACustomPaperCharacter>(player))
-	{
-		if (paper->HasCollided && uPendulumSystem->IsHitAllowed())
+	AsyncTask(ENamedThreads::GameThread, [this, player, pos]()
 		{
-			uPendulumSystem->Bounce(paper->HitDirection);
-		}
-		paper->HasCollided = false;
-	}
+			player->SetActorLocation(pos);
+			if (UPrimitiveComponent* PlayerComp = Cast<UPrimitiveComponent>(player->GetRootComponent()))
+			{
+				FVector NewVelocity(uPendulumSystem->GetPlayerBob().velocity.X,
+					-uPendulumSystem->GetPlayerBob().velocity.Y, 0.f);
+				PlayerComp->SetPhysicsLinearVelocity(NewVelocity);
+			}
+
+			// Detect hit on bob 
+			if (ACustomPaperCharacter* paper = Cast<ACustomPaperCharacter>(player))
+			{
+				if (paper->HasCollided && uPendulumSystem->IsHitAllowed())
+				{
+					uPendulumSystem->Bounce(paper->HitDirection);
+				}
+				paper->HasCollided = false;
+				UpdateTetherVisual_CPP_Var(player->GetTargetLocation(), PendulumPivotPoint);
+			}
+		});
 
 	input = 0.f;
 }
