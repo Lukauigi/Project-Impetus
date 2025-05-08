@@ -28,17 +28,17 @@ void UPendulumSystem::Update(const float DeltaTime)
 	FVector2D direction = playerBob.position - anchor;
 	float distance = direction.Size();
 	FVector2D normalizedDirection = direction / distance;
-	UE_LOG(LogTemp, Warning, TEXT("Pendulum Dir: (%f, %f)"), normalizedDirection.X, normalizedDirection.Y);
-	UE_LOG(LogTemp, Warning, TEXT("Orientation: (%f, %f)"), orientation.X, orientation.Y);
+	/*UE_LOG(LogTemp, Warning, TEXT("Pendulum Dir: (%f, %f)"), normalizedDirection.X, normalizedDirection.Y);
+	UE_LOG(LogTemp, Warning, TEXT("Orientation: (%f, %f)"), orientation.X, orientation.Y);*/
 
 	// Setup pendulum & gravity
 	playerBob.position = anchor + normalizedDirection * length;
 	FVector2D gravityDir = FVector2D(orientation.X, orientation.Y);
 	FVector2D gravity = (gravityDir * GRAVITY) * playerBob.mass;
 
-	UE_LOG(LogTemp, Warning, TEXT("PlayerBob: (%f, %f)"), playerBob.position.X, playerBob.position.Y);
+	/*UE_LOG(LogTemp, Warning, TEXT("PlayerBob: (%f, %f)"), playerBob.position.X, playerBob.position.Y);
 	UE_LOG(LogTemp, Warning, TEXT("GravityDir: (%f, %f)"), gravityDir.X, gravityDir.Y);
-	UE_LOG(LogTemp, Warning, TEXT("Gravity: (%f, %f)"), gravity.X, gravity.Y);
+	UE_LOG(LogTemp, Warning, TEXT("Gravity: (%f, %f)"), gravity.X, gravity.Y);*/
 
 	// Project gravity onto the tangential direction
 	FVector2D tangent(-normalizedDirection.Y, normalizedDirection.X);
@@ -117,7 +117,7 @@ const FVector UPendulumSystem::GetPendulumBobPosition3D()
 void UPendulumSystem::ApplyMotorTorque(const float DeltaTime)
 {
 	float desiredAngularVelocity = motorSpeed;
-	UE_LOG(LogTemp, Log, TEXT("Desired angular velocity: %f"), motorSpeed);
+	//UE_LOG(LogTemp, Log, TEXT("Desired angular velocity: %f"), motorSpeed);
 	float motorTorque = FMath::Clamp(desiredAngularVelocity - playerBob.angularVelocity,
 		-maxMotorTorque, maxMotorTorque);
 	playerBob.angularVelocity += motorTorque / playerBob.momentOfInertia * DeltaTime;

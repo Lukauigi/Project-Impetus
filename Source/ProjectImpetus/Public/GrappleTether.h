@@ -26,6 +26,8 @@ public:
 	void FireGrappleTether();
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tether")
 	void RetractGrappleTether();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Tether")
+	void UpdateTetherVisual_CPP_Var(FVector PlayerPos, FVector PendulumAnchorPos);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tether")
 	float MaxGrappleLength;
@@ -55,3 +57,15 @@ private:
 	TSubclassOf<UPendulumSystem> PendulumSystemClass;
 	float input;
 };
+
+//USTRUCT(BlueprintType)
+//struct TetherUpdateParams
+//{
+//	GENERATED_BODY()
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	FVector PlayerPos;
+//
+//	UPROPERTY(BlueprintReadWrite)
+//	FVector PendulumAnchorPos;
+//};
