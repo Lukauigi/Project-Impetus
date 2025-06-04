@@ -37,7 +37,7 @@ void UPlayerRoamingState::ExitState()
 void UPlayerRoamingState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
-	UE_LOG(LogTemp, Log, TEXT("Updating Roaming State"));
+	//UE_LOG(LogTemp, Log, TEXT("Updating Roaming State"));
 }
 
 void UPlayerRoamingState::InitTether(const FInputActionValue& Value)

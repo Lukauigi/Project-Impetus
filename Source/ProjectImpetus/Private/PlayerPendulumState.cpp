@@ -51,7 +51,7 @@ void UPlayerPendulumState::ExitState()
 void UPlayerPendulumState::UpdateState(float DeltaTime)
 {
 	Super::UpdateState(DeltaTime);
-	UE_LOG(LogTemp, Log, TEXT("Updating Pendulum State"));
+	//UE_LOG(LogTemp, Log, TEXT("Updating Pendulum State"));
 	m_GrappleTetherComponent->MyPendulumTether(DeltaTime);
 }
 
