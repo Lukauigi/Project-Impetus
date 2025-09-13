@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "PaperCharacter.h"
 #include "PooledActor.generated.h"
 
 UCLASS(Abstract, Blueprintable)
-class PROJECTIMPETUS_API APooledActor : public AActor
+class PROJECTIMPETUS_API APooledActor : public APaperCharacter
 {
 	GENERATED_BODY()
 	

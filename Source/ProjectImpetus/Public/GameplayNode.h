@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "NodeLink.h"
 #include "PooledActor.h"
-#include "Node.generated.h"
+#include "GameplayNode.generated.h"
 
 /**
  * 

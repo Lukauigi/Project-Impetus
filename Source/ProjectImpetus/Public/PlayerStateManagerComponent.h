@@ -9,6 +9,7 @@
 #include "PlayerRoamingState.h"
 #include "PlayerTetheredState.h"
 #include "PlayerPendulumState.h"
+#include "PlayerNodeGenState.h"
 // UE5 Plugins
 //#include "PaperCharacter.h"
 //#include "EnhancedInputComponent.h"
@@ -67,5 +68,8 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "States", meta = (AllowPrivateAccess = "true"))
 	UPlayerPendulumState* PendulumState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "States", meta = (AllowPrivateAccess = "true"))
+	UPlayerPendulumState* NodeGenState;
 		
 };

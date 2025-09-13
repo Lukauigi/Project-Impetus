@@ -61,6 +61,7 @@ void UPlayerStateManagerComponent::InitFSM()
 		this->RoamingState->InitState(m_InputSubSystem, InputComponent, GetOwner());
 		this->TetheredState->InitState(m_InputSubSystem, InputComponent, GetOwner());
 		this->PendulumState->InitState(m_InputSubSystem, InputComponent, GetOwner());
+		this->NodeGenState->InitState(m_InputSubSystem, InputComponent, GetOwner());
 
 		this->m_CurrentState = this->RoamingState;
 		this->m_CurrentState->EnterState();

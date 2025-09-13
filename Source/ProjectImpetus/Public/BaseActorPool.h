@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "PooledActor.h"
-#include "GameFramework/Actor.h"
+#include "PaperCharacter.h"
 #include "BaseActorPool.generated.h"
 
 UCLASS(Abstract, Blueprintable)
-class PROJECTIMPETUS_API ABaseActorPool : public AActor
+class PROJECTIMPETUS_API ABaseActorPool : public APaperCharacter
 {
 	GENERATED_BODY()
 	
