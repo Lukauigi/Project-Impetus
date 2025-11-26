@@ -54,8 +54,13 @@ void UPlayerStateManagerComponent::InitFSM()
 		this->RoamingState = NewObject<UPlayerRoamingState>(this, RoamingStateClass);
 		this->TetheredState = NewObject<UPlayerTetheredState>(this, TetheredStateClass);
 		this->PendulumState = NewObject<UPlayerPendulumState>(this, PendulumStateClass);
+		this->NodeGenState = NewObject<UPlayerNodeGenState>(this, NodeGenStateClass);
 
 		UEnhancedInputComponent* InputComponent = Cast<UEnhancedInputComponent>(m_Player->InputComponent);
+		if (!InputComponent) {
+			UE_LOG(LogTemp, Log, TEXT("InputComponent var fucked"));
+			return;
+		}
 
 		// Init States
 		this->RoamingState->InitState(m_InputSubSystem, InputComponent, GetOwner());

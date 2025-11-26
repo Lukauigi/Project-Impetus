@@ -32,6 +32,8 @@ public:
 	TSubclassOf<UPlayerTetheredState> TetheredStateClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
 	TSubclassOf<UPlayerPendulumState> PendulumStateClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "States")
+	TSubclassOf<UPlayerNodeGenState> NodeGenStateClass;
 
 	// Sets default values for this component's properties
 	UPlayerStateManagerComponent();
@@ -70,6 +72,6 @@ private:
 	UPlayerPendulumState* PendulumState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "States", meta = (AllowPrivateAccess = "true"))
-	UPlayerPendulumState* NodeGenState;
+	UPlayerNodeGenState* NodeGenState;
 		
 };
