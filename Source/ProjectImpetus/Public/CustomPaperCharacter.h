@@ -14,6 +14,9 @@ class PROJECTIMPETUS_API ACustomPaperCharacter : public APaperCharacter
 {
 	GENERATED_BODY()
 public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Management")
+	void ActivateNodeGeneration();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision Events")
 	bool HasCollided = false;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Collision Events")

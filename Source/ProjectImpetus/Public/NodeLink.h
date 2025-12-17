@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "PooledActor.h"
+#include "PaperPooledActor.h"
 #include "NodeLink.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTIMPETUS_API ANodeLink : public APooledActor
+class PROJECTIMPETUS_API ANodeLink : public APaperPooledActor
 {
 	GENERATED_BODY()
 

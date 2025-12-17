@@ -21,4 +21,5 @@ public:
 	
 private:
 	void DisableTether(const FInputActionValue& Value);
+	void TransitionToNodeGen(const FInputActionValue& Value);
 };

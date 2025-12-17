@@ -15,6 +15,10 @@ UNodePoolManagerComponent::UNodePoolManagerComponent()
 
 void UNodePoolManagerComponent::CreateNodeLinkCombo()
 {
+	// get node & link from pool
+	// set node pos to player pos
+	// set node link startPnt to player pos
+	// set node link to node's prev link or nextLink
 }
 
 void UNodePoolManagerComponent::DestroyNodeLinkCombo()

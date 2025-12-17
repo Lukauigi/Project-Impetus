@@ -4,6 +4,7 @@
 #include "PlayerTetheredState.h"
 #include "../../../../../../../../Program Files/Epic Games/UE_5.3/Engine/Plugins/EnhancedInput/Source/EnhancedInput/Public/InputMappingContext.h"
 #include "GrappleTether.h"
+#include "CustomPaperCharacter.h"
 
 void UPlayerTetheredState::EnterState()
 {
@@ -21,6 +22,17 @@ void UPlayerTetheredState::EnterState()
 				ETriggerEvent::Triggered, 
 				this, 
 				&UPlayerTetheredState::DisableTether
+			);
+			m_BoundHandles.Add(Handle);
+		}
+		// bind function to GenerateNode
+		if (Mapping.Action->GetFName() == "IA_GenerateNode")
+		{
+			FInputBindingHandle Handle = m_EnhancedInputComponent->BindAction(
+				Mapping.Action,
+				ETriggerEvent::Triggered,
+				this,
+				&UPlayerTetheredState::TransitionToNodeGen
 			);
 			m_BoundHandles.Add(Handle);
 		}
@@ -44,4 +56,12 @@ void UPlayerTetheredState::DisableTether(const FInputActionValue& Value)
 	UE_LOG(LogTemp, Log, TEXT("TState has heard binded action"));
 	UGrappleTether* GrappleTetherComponent = m_Player->GetComponentByClass<UGrappleTether>();
 	GrappleTetherComponent->RetractGrappleTether();
+}
+
+void UPlayerTetheredState::TransitionToNodeGen(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp, Log, TEXT("TState has heard TransitionToNodeGen binded action"));
+	// need to call a func that will change state to PlayerNodeGen
+	ACustomPaperCharacter* p = Cast<ACustomPaperCharacter>(m_Player);
+	p->ActivateNodeGeneration();
 }

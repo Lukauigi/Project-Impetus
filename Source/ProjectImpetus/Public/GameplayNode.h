@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "NodeLink.h"
-#include "PooledActor.h"
+#include "PaperPooledActor.h"
 #include "GameplayNode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTIMPETUS_API AGameplayNode : public APooledActor
+class PROJECTIMPETUS_API AGameplayNode : public APaperPooledActor
 {
 	GENERATED_BODY()
 
